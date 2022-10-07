@@ -1,0 +1,34 @@
+
+
+/* VECTOR OPERATOR */
+
+template< class T, class Alloc >
+bool operator==( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs );
+
+template< class T, class Alloc >
+bool operator!=( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs );
+(2)	(until C++20)
+
+template< class T, class Alloc >
+bool operator<( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs );
+(3)	(until C++20)
+
+template< class T, class Alloc >
+bool operator<=( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs );
+(4)	(until C++20)
+
+template< class T, class Alloc >
+bool operator>( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs );
+(5)	(until C++20)
+
+template< class T, class Alloc >
+bool operator>=( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs );
+(6)	(until C++20)
+
+1-2) Checks if the contents of lhs and rhs are equal, that is, they have the same number of elements and each element in lhs compares equal with the element in rhs at the same position.
+3-6) Compares the contents of lhs and rhs lexicographically. The comparison is performed by a function equivalent to std::lexicographical_compare.
+
+
+lhs, rhs	-	vectors whose contents to compare
+-T must meet the requirements of EqualityComparable in order to use overloads (1-2).
+-T must meet the requirements of LessThanComparable in order to use overloads (3-6). The ordering relation must establish total order.
