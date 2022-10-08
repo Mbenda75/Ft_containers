@@ -4,11 +4,21 @@
 # include <iostream>
 # include <string>
 
+namespace ft{
+
 template<class T, class Allocator = std::allocator<T> >
 class vector
 {
+	private:
 
-				/* VECTOR CONSTRUCTOR */
+			value_type		*_data;
+			size_type		_size;
+			size_type		_capacity;
+			allocator_type	_allocator;
+
+
+	/*----------------------------VECTOR CONSTRUCTOR -----------------------------------------------------*/
+
 	public:
 		//default (1)
 		explicit vector( const Allocator &alloc = Allocator() ):
@@ -41,7 +51,7 @@ class vector
 
 		~vector( void )
 		{
-			printf( )
+
 			//this->clear();
 			//_allocator.deallocate(this->_data, this->_capacity);
 		}
@@ -49,7 +59,7 @@ class vector
 		using ValueType = T;
 		using Iterator = vectorIterator<vector<T>>;
 
-
+	/*---------------------------------------ITERATOR FUNCTION-----------------------------------------*/
 		iterator begin() 
      		{ return iterator(this->_data); }
 	
@@ -76,16 +86,36 @@ class vector
 
 		vector &	operator=( vector const & rhs );
 
-	private:
 
-			value_type		*_data;
-			size_type		_size;
-			size_type		_capacity;
-			allocator_type	_allocator;
+	/*-----------------------------CAPACITY FUNCTIONS--------------------------------------- */
+	public:
+		bool empty() const;
+		{
+			return begin() == end();
+		}
+		size_type size() const;
+		size_type max_size() const;
+		size_type capacity() const;
+		void resize (size_type n, ValueType val = value_type());
+		void reserve( size_type new_cap );
+
+	/*---------------------------MODIFIERS FUNCTIONS------------------------------------------*/
+	public:
+		void clear();
+		iterator insert( const_iterator pos, size_type count, const T& value );
+		constexpr iterator insert( const_iterator pos, size_type count, const T& value );
+		iterator erase( iterator pos ); (until C++11)
+		void push_back( T&& value );(since C++11) (until C++20)
+		void resize( size_type count ); (since C++11) (until C++20)
+		void swap( vector& other );(until c++17)
+
+
+
 
 
 };
+}
 
 //std::ostream &			operator<<( std::ostream & o, Vector<T> const & i );
 
-#endif /* ********************************************************** VECTOR_H  
+#endif /* ********************************************************** VECTOR_H */
