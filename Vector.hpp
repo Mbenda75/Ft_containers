@@ -3,14 +3,23 @@
 
 # include <iostream>
 # include <string>
+# include "Vector_iterator.hpp"
+
+template<typename vector>
+class vectorIterator;
 
 namespace ft{
 
 template<class T, class Allocator = std::allocator<T> >
 class vector
 {
-	private:
+	public:
+		typedef std::size_t size_type;
+		typedef Allocator allocator_type;
+		typedef T value_type;
+		typedef vectorIterator<value_type> iterator;
 
+	private:
 			value_type		*_data;
 			size_type		_size;
 			size_type		_capacity;
@@ -24,6 +33,7 @@ class vector
 		explicit vector( const Allocator &alloc = Allocator() ):
 		_data(NULL), _size(0), _capacity(0), _allocator(alloc)
 		{
+			//std::cout << "default vector const" << std::endl;
 			return;
 		}
 
@@ -56,20 +66,20 @@ class vector
 			//_allocator.deallocate(this->_data, this->_capacity);
 		}
 	public:
-		using ValueType = T;
-		using Iterator = vectorIterator<vector<T>>;
+		//using ValueType = T;
+		//using iterator = vectorIterator<vector<T>>;
 
 	/*---------------------------------------ITERATOR FUNCTION-----------------------------------------*/
 		iterator begin() 
      		{ return iterator(this->_data); }
-	
+/* 	
 		const_iterator begin() const
      		{ return const_iterator(this->_data); }
-
+ */
 		iterator end() 
      		{ return iterator(this->_data[_size]); }
 		
-		const_iterator end() const
+/* 		const_iterator end() const
      		{ return const_iterator(this->_data[_size]); }
 
 		reverse_iterator rbegin()
@@ -82,14 +92,14 @@ class vector
 		    { return reverse_iterator(begin()); }
 
 		const_reverse_iterator rend() const 
-      		{ return const_reverse_iterator(begin()); }
+      		{ return const_reverse_iterator(begin()); } */
 
 		vector &	operator=( vector const & rhs );
 
 
-	/*-----------------------------CAPACITY FUNCTIONS--------------------------------------- */
+ 	/*-----------------------------CAPACITY FUNCTIONS--------------------------------------- */
 	public:
-		bool empty() const;
+/* 		bool empty() const;
 		{
 			return begin() == end();
 		}
@@ -98,17 +108,17 @@ class vector
 		size_type capacity() const;
 		void resize (size_type n, ValueType val = value_type());
 		void reserve( size_type new_cap );
-
+ */
 	/*---------------------------MODIFIERS FUNCTIONS------------------------------------------*/
-	public:
+/* 	public:
 		void clear();
 		iterator insert( const_iterator pos, size_type count, const T& value );
 		constexpr iterator insert( const_iterator pos, size_type count, const T& value );
-		iterator erase( iterator pos ); (until C++11)
-		void push_back( T&& value );(since C++11) (until C++20)
-		void resize( size_type count ); (since C++11) (until C++20)
-		void swap( vector& other );(until c++17)
-
+		iterator erase( iterator pos ); //(until C++11)
+		void push_back( T & value );//(since C++11) (until C++20)
+		void resize( size_type count );// (since C++11) (until C++20)
+		void swap( vector& other );//(until c++17) */
+ 
 
 
 
