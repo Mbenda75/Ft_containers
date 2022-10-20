@@ -1,20 +1,20 @@
 #ifndef VECTOR_ITERATOR_HPP
 # define VECTOR_ITERATOR_HPP
+
 #include "Vector.hpp"
 
 namespace ft
 {
-    template<typename vector>
+    template<typename T>
     class vectorIterator
     {
 
         public:
-            using ValueType = typename vector::ValueType;
-            //typedef typename vector::ValueType Valuetype
-            using PointerType = ValueType*;
-            //typedef ValueType PointerType;
-            using ReferenceType = ValueType&;
-            //typedef ValueType ReferenceType;
+            typedef T ValueType;
+
+            typedef ValueType PointerType;
+
+            typedef ValueType ReferenceType;
 
         public:
             vectorIterator(PointerType ptr): _ptr(ptr)
@@ -53,24 +53,42 @@ namespace ft
                 return *(_ptr + index);//_ptr[index]
             }
 
-            PointerType operator->()
+/*           template< class T, class Alloc >
+            bool operator<( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs )
             {
-                return(_ptr);
+
             }
-            ReferenceType operator*()
+         
+            template< class T, class Alloc >
+            bool operator<=( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs )
             {
-                return *(_ptr);
+                return (!(rhs < lhs));
+            }
+   
+            template< class T, class Alloc >
+            bool operator>( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs )
+            {
+                return (rhs < lhs);
+            } 
+
+            template< class T, class Alloc >
+            bool operator>=( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs )
+            {
+                return (!(lhs < rhs));
             }
 
-            bool operator== (const vectorIterator& equal) const
+            template< class T, class Alloc >
+            bool operator==( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs )
             {
-                return *this == equal._ptr;
+                return (*(lhs == rhs));
             }
 
-            bool operator!= (const vectorIterator& equal) const
+            template< class T, class Alloc >
+            bool operator!=( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs )
             {
-                return *(this == equal._ptr);
-            }
+                return (!(lhs == rhs));
+            }*/
+
         private:
             PointerType _ptr;
     };
