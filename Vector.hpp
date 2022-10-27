@@ -122,10 +122,10 @@ class vector
      		{ return const_iterator(this->_data); }
 
 		iterator end() 
-     		{ return iterator(this->_data[_size]); }
+     		{ return iterator(this->_data + _size); }
 		
  		const_iterator end() const
-     		{ return const_iterator(this->_data[_size]); }
+     		{ return const_iterator(this->_data + _size); }
 
 		reverse_iterator rbegin()
       		{ return reverse_iterator(end()); }
@@ -160,13 +160,15 @@ class vector
 		{
 			_data = _allocator.allocate(1);
 			_allocator.construct(_data, val);
-			_data[_size] = val;
+
+			//_data[_size] = val;
 			_size++;
 		}
 
 	/* 	void push_back(const value_type &val) 
 		{
-    		if (size() + 1 > capacity()) {
+    		if (size() + 1 > capacity()) 
+			{
     		  size_type _capacity = capacity();
     		  if (_capacity== 0)
     		    _capacity= 1;

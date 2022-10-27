@@ -65,34 +65,35 @@ namespace ft
 
   		    pointer operator->() const { return _ptr; }
 
-            /*         
-            template <class T, class Alloc>
-            bool operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs) {
-              if (lhs.size() == rhs.size())
-                return equal(lhs.begin(), lhs.end(), rhs.begin());
-              return false;
+            friend bool operator==(const vectorIterator &lhs,
+                         const vectorIterator &rhs) {
+              return lhs._ptr == rhs._ptr;
             }
-
-            template <class T, class Alloc>
-            bool operator<(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs) {
-              return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
-                                             rhs.end());
+            
+            friend bool operator!=(const vectorIterator &lhs,
+                                   const vectorIterator &rhs) {
+              return !(lhs._ptr == rhs._ptr);
             }
-
-            template <class T, class Alloc>
-            bool operator<=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs) {
-              return !(lhs > rhs);
+            
+            friend bool operator<(const vectorIterator &lhs,
+                                  const vectorIterator &rhs) {
+              return lhs._ptr < rhs._ptr;
             }
-
-            template <class T, class Alloc>
-            bool operator>(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs) {
-              return rhs < lhs;
+            
+            friend bool operator>(const vectorIterator &lhs,
+                                  const vectorIterator &rhs) {
+              return rhs._ptr < lhs._ptr;
             }
-
-            template <class T, class Alloc>
-            bool operator>=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs) {
-              return !(lhs < rhs);
-            }*/
+            
+            friend bool operator<=(const vectorIterator &lhs,
+                                   const vectorIterator &rhs) {
+              return !(lhs._ptr > rhs._ptr);
+            }
+            
+            friend bool operator>=(const vectorIterator &lhs,
+                                   const vectorIterator &rhs) {
+              return !(lhs._ptr < rhs._ptr);
+            } 
 
     };
 
@@ -157,35 +158,36 @@ namespace ft
 
   		    pointer operator->() const { return _ptr; }
 
-   /*           friend bool operator==(const const_vector_iterator &lhs,
-                         const const_vector_iterator &rhs) {
-              return lhs.elem == rhs.elem;
+            friend bool operator==(const const_vectorIterator &lhs,
+                         const const_vectorIterator &rhs) {
+              return lhs._ptr == rhs._ptr;
             }
             
-            friend bool operator!=(const const_vector_iterator &lhs,
-                                   const const_vector_iterator &rhs) {
-              return !(lhs.elem == rhs.elem);
+            friend bool operator!=(const const_vectorIterator &lhs,
+                                   const const_vectorIterator &rhs) {
+              return !(lhs._ptr == rhs._ptr);
             }
             
-            friend bool operator<(const const_vector_iterator &lhs,
-                                  const const_vector_iterator &rhs) {
-              return lhs.elem < rhs.elem;
+            friend bool operator<(const const_vectorIterator &lhs,
+                                  const const_vectorIterator &rhs) {
+              return lhs._ptr < rhs._ptr;
             }
             
-            friend bool operator>(const const_vector_iterator &lhs,
-                                  const const_vector_iterator &rhs) {
-              return rhs.elem < lhs.elem;
+            friend bool operator>(const const_vectorIterator &lhs,
+                                  const const_vectorIterator &rhs) {
+              return rhs._ptr < lhs._ptr;
             }
             
-            friend bool operator<=(const const_vector_iterator &lhs,
-                                   const const_vector_iterator &rhs) {
-              return !(lhs.elem > rhs.elem);
+            friend bool operator<=(const const_vectorIterator &lhs,
+                                   const const_vectorIterator &rhs) {
+              return !(lhs._ptr > rhs._ptr);
             }
             
-            friend bool operator>=(const const_vector_iterator &lhs,
-                                   const const_vector_iterator &rhs) {
-              return !(lhs.elem < rhs.elem);
-            } */
+            friend bool operator>=(const const_vectorIterator &lhs,
+                                   const const_vectorIterator &rhs) {
+              return !(lhs._ptr < rhs._ptr);
+            } 
+        };
 }
 
 #endif
