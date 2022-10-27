@@ -15,19 +15,24 @@ namespace ft{
 template<class T, class Allocator = std::allocator<T>>
 class vector
 {
-	//The first template parameter (T)
+	public:
+		/*-------------------------MEMBER TYPE--------------------------------------------*/
+		//The first template parameter (T)
 		typedef T value_type;
-
-      	//typedef 		T&       reference;
-      	//typedef const 	T& const_reference;
-
 		//The second template parameter (Allocator)
 		typedef Allocator allocator_type;
-
 		typedef std::ptrdiff_t  difference_type;
 		typedef std::size_t size_type;
+
+		/*----------------------POINTER & REFERENCE -------------------------------------*/
+
 		typedef typename allocator_type::pointer    pointer;
-		//typedef	typename allocator_type::const_pointer const_pointer;
+		typedef	typename allocator_type::const_pointer const_pointer;
+		typedef typename allocator_type::reference reference;
+  		typedef typename allocator_type::const_reference const_reference;
+
+		/*------------------------VECTOR ITERATOR ------------------------------------*/
+
 		typedef vectorIterator<value_type> iterator;
 		typedef vectorIterator<value_type> const_iterator;
 		typedef vectorIterator<value_type> reverse_iterator;
@@ -78,10 +83,38 @@ class vector
 		~vector( void )
 		{
 			//this->clear();
-			//_allocator.deallocate(this->_data, this->_capacity);
+			_allocator.deallocate(this->_data, this->_capacity);
 		}
 
-	/*---------------------------------------ITERATOR FUNCTION-----------------------------------------*/
+	/*-----------------------------------ELEMENT ACCESS-------------------------------------------------*/
+		reference operator[](size_type pos) 
+		{ 
+			return _data[pos]; 
+		}
+
+  		const_reference operator[](size_type pos) const { return _data[pos]; }
+
+  		reference at(size_type pos) 
+		{
+  		  if (pos >= _size) throw std::out_of_range("vector");
+  		  return _data[pos];
+  		}
+
+  		const_reference at(size_type pos) const {
+  		  if (pos >= _size) throw std::out_of_range("vector");
+  		  return _data[pos];
+  		}
+
+  		reference front() { return _data[0]; }
+
+  		const_reference front() const { return _data[0]; }
+
+  		reference back() { return _data[_size - 1]; }
+
+  		const_reference back() const { return _data[_size - 1]; }
+
+
+	/*----------------------------------ITERATOR FUNCTION-----------------------------------------------*/
 		iterator begin() 
      		{ return iterator(this->_data); }
 	
@@ -111,17 +144,18 @@ class vector
 
  	/*-----------------------------CAPACITY FUNCTIONS--------------------------------------- */
 	public:
-/* 		bool empty() const;
-		{
-			return begin() == end();
-		}
-		size_type size() const;
+		bool empty() const { return _size == 0; }
+/* 		
 		size_type max_size() const;
-		size_type capacity() const;
 		void resize (size_type n, ValueType val = value_type()); //_Size = capacity --> multiplier x2 capacity
 		void reserve( size_type new_cap );
  */
 	/*---------------------------MODIFIERS FUNCTIONS------------------------------------------*/
+
+	 	size_type capacity() const { return _capacity; }
+
+		size_type size() const { return _size; }
+
 		void push_back( const T & val )//(since C++11) (until C++20) // faire le alloc construct
 		{
 			_data = _allocator.allocate(1);
@@ -129,6 +163,20 @@ class vector
 			_data[_size] = val;
 			_size++;
 		}
+
+	/* 	void push_back(const value_type &val) 
+		{
+    		if (size() + 1 > capacity()) {
+    		  size_type _capacity = capacity();
+    		  if (_capacity== 0)
+    		    _capacity= 1;
+    		  else
+    		    _capacity*= 2;
+    		  reserve(_cap);
+    		}
+    		insert(end(), val);
+  		} */
+
 /* 	public:
 		void clear();
 
@@ -145,6 +193,7 @@ class vector
 };
 }
 
-//std::ostream &			operator<<( std::ostream & o, Vector<T> const & i );
+//std::ostream &			operator<<( std::ostream & o, vector<T> const & i )
+
 
 #endif /* ********************************************************** VECTOR_H */

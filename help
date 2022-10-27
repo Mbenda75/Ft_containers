@@ -32,3 +32,10 @@ bool operator>=( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rh
 lhs, rhs	-	vectors whose contents to compare
 -T must meet the requirements of EqualityComparable in order to use overloads (1-2).
 -T must meet the requirements of LessThanComparable in order to use overloads (3-6). The ordering relation must establish total order.
+
+
+
+
+Expression	Return type	Equivalent expression
+i++	It	            It               ip = i; ++i; return ip;
+*i++	        reference
