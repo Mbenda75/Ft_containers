@@ -19,8 +19,10 @@ class vector
 		/*-------------------------MEMBER TYPE--------------------------------------------*/
 		//The first template parameter (T)
 		typedef T value_type;
+
 		//The second template parameter (Allocator)
 		typedef Allocator allocator_type;
+		
 		typedef std::ptrdiff_t  difference_type;
 		typedef std::size_t size_type;
 
@@ -28,6 +30,7 @@ class vector
 
 		typedef typename allocator_type::pointer    pointer;
 		typedef	typename allocator_type::const_pointer const_pointer;
+
 		typedef typename allocator_type::reference reference;
   		typedef typename allocator_type::const_reference const_reference;
 
@@ -146,9 +149,36 @@ class vector
 	public:
 		bool empty() const { return _size == 0; }
 /* 		
-		size_type max_size() const;
+		size_type max_size() const {return _allocator.max_size()};
 		void resize (size_type n, ValueType val = value_type()); //_Size = capacity --> multiplier x2 capacity
+		
+		Augmentez la capacité du vecteur (le nombre total d'éléments que le vecteur peut contenir sans nécessiter de réallocation) 
+		à une valeur supérieure ou égale à new_cap. Si new_capest supérieur à la capacité actuelle() , 
+		un nouveau stockage est alloué, sinon la fonction ne fait rien.
+
+		reserve()ne change pas la taille du vecteur.
+
+		Si new_capest supérieur à capacity() , tous les itérateurs, y compris l'itérateur après la fin, 
+		et toutes les références aux éléments sont invalidés. Sinon, aucun itérateur ou référence n'est invalidé.
+
+
+
 		void reserve( size_type new_cap );
+
+		void reserve(size_type n) 
+		{
+    	if (n == 0 || n <= _capacity) return;
+    	value_type *new_data = allocator.allocate(n);
+    	for (size_type i = 0; i < len; i++)
+		{
+    	  allocator.construct(new_data + i, _data[i]);
+    	  allocator.destroy(_data + i);
+    	}
+    	allocator.deallocate(_data, _capacity);
+    	_capacity = n;
+    	_data = new_data;
+		}
+  }
  */
 	/*---------------------------MODIFIERS FUNCTIONS------------------------------------------*/
 
@@ -158,9 +188,8 @@ class vector
 
 		void push_back( const T & val )//(since C++11) (until C++20) // faire le alloc construct
 		{
-			_data = _allocator.allocate(1);
+			_data = _allocator.allocate(_size);
 			_allocator.construct(_data, val);
-
 			//_data[_size] = val;
 			_size++;
 		}
@@ -184,6 +213,7 @@ class vector
 
 		iterator insert( const_iterator pos, const T& value );
 		iterator insert( const_iterator pos, size_type count, const T& value );
+
 		template< class InputIt >
 		iterator insert( const_iterator pos, InputIt first, InputIt last );	
 
@@ -194,8 +224,5 @@ class vector
 		void swap( vector& other );//(until c++17) */
 };
 }
-
-//std::ostream &			operator<<( std::ostream & o, vector<T> const & i )
-
 
 #endif /* ********************************************************** VECTOR_H */
