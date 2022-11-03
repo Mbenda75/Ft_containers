@@ -37,13 +37,12 @@ class vector
 		/*------------------------VECTOR ITERATOR ------------------------------------*/
 
 		typedef vectorIterator<value_type> iterator;
-		typedef vectorIterator<value_type> const_iterator;
-		typedef vectorIterator<value_type> reverse_iterator;
-		typedef vectorIterator<value_type> const_reverse_iterator;
+		typedef const_vectorIterator<value_type> const_iterator;
+		typedef vector_reverseIterator<value_type> reverse_iterator;
+		typedef const_vector_reverseIterator<value_type> const_reverse_iterator;
 
 	private:
 			value_type		*_data;
-			pointer 		 _ptr;
 			size_type		_size;
 			size_type		_capacity;
 			allocator_type	_allocator;
@@ -73,7 +72,10 @@ class vector
 		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() ): 
 		_data(NULL), _size(0), _capacity(0), _allocator(alloc)
 		{
-			//assignDispatch(first, last);
+				while (first != last) {
+					push_back(*first);
+					first++;
+				}
 		}
 
 		//copy (4)	
@@ -85,16 +87,13 @@ class vector
 
 		~vector( void )
 		{
-			//this->clear();
-			_allocator.deallocate(this->_data, this->_capacity);
+			clear();
+			_allocator.deallocate(_data, _size);
 		}
 
 	/*-----------------------------------ELEMENT ACCESS-------------------------------------------------*/
-		reference operator[](size_type pos) 
-		{ 
-			return _data[pos]; 
-		}
-
+		reference operator[](size_type pos)  { return _data[pos]; }
+	
   		const_reference operator[](size_type pos) const { return _data[pos]; }
 
   		reference at(size_type pos) 
@@ -119,17 +118,18 @@ class vector
 
 	/*----------------------------------ITERATOR FUNCTION-----------------------------------------------*/
 		iterator begin() 
-     		{ return iterator(this->_data); }
+     		{ return iterator(_data); }
 	
 		const_iterator begin() const
-     		{ return const_iterator(this->_data); }
+     		{ return const_iterator(_data); }
 
 		iterator end() 
-     		{ return iterator(this->_data + _size); }
+     		{ return iterator(_data + _size); }
 		
  		const_iterator end() const
-     		{ return const_iterator(this->_data + _size); }
+     		{ return const_iterator(_data + _size); }
 
+	/*----------------------------------REVERSE ITERATOR FUNCTION-----------------------------------------------*/
 		reverse_iterator rbegin()
       		{ return reverse_iterator(end()); }
 
@@ -142,42 +142,33 @@ class vector
 		const_reverse_iterator rend() const 
       		{ return const_reverse_iterator(begin()); } 
 
+
+
+
+
 		vector &	operator=( vector const & rhs );
 
 
  	/*-----------------------------CAPACITY FUNCTIONS--------------------------------------- */
-	public:
+		template <class InputIterator>
+		void assign (InputIterator first, InputIterator last) {
+			clear();
+			while (first != last)
+				push_back(first++);}
+
+		void assign (size_type n, const value_type& val) {
+			clear();
+			while (n--)
+				push_back(val);}
+
 		bool empty() const { return _size == 0; }
+		
+		size_type max_size() const {return _allocator.max_size();}
 /* 		
-		size_type max_size() const {return _allocator.max_size()};
+	
+
 		void resize (size_type n, ValueType val = value_type()); //_Size = capacity --> multiplier x2 capacity
 		
-		Augmentez la capacité du vecteur (le nombre total d'éléments que le vecteur peut contenir sans nécessiter de réallocation) 
-		à une valeur supérieure ou égale à new_cap. Si new_capest supérieur à la capacité actuelle() , 
-		un nouveau stockage est alloué, sinon la fonction ne fait rien.
-
-		reserve()ne change pas la taille du vecteur.
-
-		Si new_capest supérieur à capacity() , tous les itérateurs, y compris l'itérateur après la fin, 
-		et toutes les références aux éléments sont invalidés. Sinon, aucun itérateur ou référence n'est invalidé.
-
-
-
-		void reserve( size_type new_cap );
-
-		void reserve(size_type n) 
-		{
-    	if (n == 0 || n <= _capacity) return;
-    	value_type *new_data = allocator.allocate(n);
-    	for (size_type i = 0; i < len; i++)
-		{
-    	  allocator.construct(new_data + i, _data[i]);
-    	  allocator.destroy(_data + i);
-    	}
-    	allocator.deallocate(_data, _capacity);
-    	_capacity = n;
-    	_data = new_data;
-		}
   }
  */
 	/*---------------------------MODIFIERS FUNCTIONS------------------------------------------*/
@@ -186,41 +177,79 @@ class vector
 
 		size_type size() const { return _size; }
 
-		void push_back( const T & val )//(since C++11) (until C++20) // faire le alloc construct
+		void pop_back () 
 		{
-			_data = _allocator.allocate(_size);
-			_allocator.construct(_data, val);
-			//_data[_size] = val;
-			_size++;
+			if (!_size)
+				return ;
+			_allocator.destroy(_data + _size - 1);
+			_size--;
 		}
 
-	/* 	void push_back(const value_type &val) 
+		void push_back( const T & val )
 		{
-    		if (size() + 1 > capacity()) 
+			if (_capacity == 0)
+				reserve(1);
+			while (_size + 1 > _capacity)
+				reserve(_capacity * 2);
+			_data[_size] = val;
+			_size += 1;
+		}
+
+		void reserve(size_type new_cap) 
+		{
+    		if (new_cap == 0 || new_cap <= _capacity) return;
+
+    		value_type *new_data = _allocator.allocate(new_cap);
+
+    		for (size_type i = 0; i < _size; i++)
 			{
-    		  size_type _capacity = capacity();
-    		  if (_capacity== 0)
-    		    _capacity= 1;
-    		  else
-    		    _capacity*= 2;
-    		  reserve(_cap);
+    		  _allocator.construct(new_data + i, _data[i]);
+    		  _allocator.destroy(_data + i);
     		}
-    		insert(end(), val);
-  		} */
+    		_allocator.deallocate(_data, _capacity);
+    		_capacity = new_cap;
+    		_data = new_data;
+		}
+
+		iterator erase (iterator position) {
+				vector	tmp(position + 1, end());
+				
+				for (size_t i = 0; i <= tmp.size(); i++)
+					pop_back();
+				for (iterator it = tmp.begin(); it != tmp.end(); it++)
+					push_back(*it);
+				return (position);
+			}
+
+
+			iterator erase (iterator first, iterator last) {
+				iterator tmp(first);
+
+				while (tmp++ != last)
+					erase(first);
+				return (first);
+			}     
+
+	void clear()
+	{
+		if (_size > 0)
+		{
+			iterator it = this->begin();
+			while (it != this->end())
+				_allocator.destroy(&(*it++));
+			_size = 0;
+		}
+	}
 
 /* 	public:
-		void clear();
 
-		iterator insert( const_iterator pos, const T& value );
+		iterator insert(const_iterator pos, const T& value );
+
 		iterator insert( const_iterator pos, size_type count, const T& value );
 
 		template< class InputIt >
 		iterator insert( const_iterator pos, InputIt first, InputIt last );	
 
-		iterator erase( iterator pos ); //(until C++11)
-		iterator erase( iterator first, iterator last );
-		
-		void resize( size_type count );// (since C++11) (until C++20)
 		void swap( vector& other );//(until c++17) */
 };
 }
