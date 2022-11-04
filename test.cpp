@@ -1,5 +1,5 @@
 #include <stdio.h>
-class B {
+/* class B {
 public:
    void f(char) {
       printf("In B::f()\n");
@@ -29,4 +29,32 @@ int main() {
    D myD;
    myD.f(1);
    myD.g('a');
+} */
+#include <iterator>
+#include <algorithm>
+#include <vector>
+#include <iostream>
+
+int main( )
+{
+   using namespace std;
+   int i;
+
+   vector<int> vec;
+   for ( i = 1 ; i < 6 ; ++i )
+   {
+      vec.push_back ( 2 * i );
+   }
+
+   vector <int>::iterator vIter;
+   cout << "The vector vec is: ( ";
+   for ( vIter = vec.begin ( ) ; vIter != vec.end ( ); vIter++ )
+      std::cout << *vIter << " ";
+   std::cout << ")." << std::endl;
+
+   vector <int>::reverse_iterator rvIter;
+   std::cout << "The vector vec reversed is: ( ";
+   for ( rvIter = vec.rbegin( ) ; rvIter != vec.rend( ); rvIter++)
+      cout << *rvIter << " ";
+   std::cout<< ")." << std::endl;
 }

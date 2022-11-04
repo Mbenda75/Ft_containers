@@ -41,6 +41,18 @@ namespace ft
         typedef T&                              reference;
         typedef std::random_access_iterator_tag iterator_category;
     };
+
+    template <class Iter>
+    class reverse__iterator 
+    {
+        public:
+            typedef Iter iterator_type;
+            typedef typename iterator_traits<Iter>::iterator_category iterator_category;
+            typedef typename iterator_traits<Iter>::value_type value_type;
+            typedef typename iterator_traits<Iter>::difference_type difference_type;
+            typedef typename iterator_traits<Iter>::pointer pointer;
+            typedef typename iterator_traits<Iter>::reference reference;
+    }       
 }
 
 #endif

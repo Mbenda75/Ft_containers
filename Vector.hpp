@@ -60,11 +60,10 @@ class vector
 		}
 
 		//fill (2)	
-		//l'allocator permet d allouer ou desallouer de la memoire
 		explicit vector( size_type n, const T& value = T(), const Allocator& alloc = Allocator() ): 
 		_data(NULL), _size(0), _capacity(0), _allocator(alloc)
 		{
-			//resize(n, value);
+			resize(n, value);
 		}
 
 		//range (3)
@@ -142,10 +141,6 @@ class vector
 		const_reverse_iterator rend() const 
       		{ return const_reverse_iterator(begin()); } 
 
-
-
-
-
 		vector &	operator=( vector const & rhs );
 
 
@@ -164,13 +159,30 @@ class vector
 		bool empty() const { return _size == 0; }
 		
 		size_type max_size() const {return _allocator.max_size();}
-/* 		
-	
 
-		void resize (size_type n, ValueType val = value_type()); //_Size = capacity --> multiplier x2 capacity
-		
-  }
- */
+		void resize (size_type n, value_type val = value_type()) 
+		{
+			value_type *new_data;
+			new_data = _allocator.allocate(n);
+			if (n > _size) {
+				for (size_t i = 0; i < _size; i++)
+					_allocator.construct(new_data + i, *(_data + i));
+				for (size_t i = 0; i < n - _size; i++)
+					_allocator.construct(new_data + _size + i, val);
+			}
+			else {
+				for (size_t i = 0; i < n; i++)
+					_allocator.construct(new_data + i, *(_data + i));
+			}
+			if (_size) {
+				_allocator.destroy(_data);
+				_allocator.deallocate(_data, _capacity);
+			}
+			_capacity = n;
+			_size = n;
+			_data = new_data;
+		}
+
 	/*---------------------------MODIFIERS FUNCTIONS------------------------------------------*/
 
 	 	size_type capacity() const { return _capacity; }
@@ -192,7 +204,7 @@ class vector
 			while (_size + 1 > _capacity)
 				reserve(_capacity * 2);
 			_data[_size] = val;
-			_size += 1;
+			_size++;
 		}
 
 		void reserve(size_type new_cap) 
@@ -240,13 +252,32 @@ class vector
 			_size = 0;
 		}
 	}
+/* 
+	iterator insert(const_iterator pos, const T& val )
+	{
+		vector tmp(pos);
+	}
+ */
+	void insert(iterator pos, size_type count, const T& val )
+	{
+		value_type *new_ins = _allocator.allocate(count + _size);
+
+		//difference_type diff =  pos - begin();
+			for (size_t i = 0; i < count;i++)
+			{
+				_allocator.construct(new_ins, val);
+			}
+			for (size_t j = 0 ; j < _size ;j++)
+			{
+				//std::cout << "avant construc == " << *(new_ins + count+ j) << std::endl;
+				_allocator.construct(new_ins + count + j, *(_data + j));
+				//std::cout << "apres construc == " << *(new_ins + count + j) << std::endl;
+			}
+			resize(_size + count, val);
+			_data = new_ins; 
+	}
 
 /* 	public:
-
-		iterator insert(const_iterator pos, const T& value );
-
-		iterator insert( const_iterator pos, size_type count, const T& value );
-
 		template< class InputIt >
 		iterator insert( const_iterator pos, InputIt first, InputIt last );	
 

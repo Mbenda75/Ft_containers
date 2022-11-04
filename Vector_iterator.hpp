@@ -65,8 +65,8 @@ namespace ft
 
   		    pointer operator->() const { return _ptr; }
 
-            vectorIterator operator +(difference_type other) { return otherectorIterator(_ptr + other); }
-			vectorIterator operator -(difference_type other) { return otherectorIterator(_ptr - other); }
+            vectorIterator operator +(difference_type other) { return vectorIterator(_ptr + other); }
+			vectorIterator operator -(difference_type other) { return vectorIterator(_ptr - other); }
 			difference_type operator +(vectorIterator other) { return _ptr + other._ptr; }
 			difference_type operator -(vectorIterator other) { return _ptr - other._ptr; }
 
@@ -205,6 +205,7 @@ namespace ft
 	template < class iterator >
 	class vector_reverseIterator 
     {
+            
 		public :
 			typedef iterator							iterator_type;
 			typedef typename iterator::value_type		value_type;
@@ -213,6 +214,9 @@ namespace ft
 			typedef typename iterator::pointer			pointer;
 			typedef typename iterator::const_pointer	const_pointer;
 			typedef typename iterator::difference_type	difference_type;
+
+        private :
+			pointer _ptr;
 
 			vector_reverseIterator(void) {}
 			vector_reverseIterator(pointer ptr) { _ptr = ptr; }
@@ -264,9 +268,12 @@ namespace ft
 			const_reference operator [](difference_type n) const { return *(_ptr + n); }
 
 			pointer get_ptr() { return _ptr; }
-		private :
-			pointer _ptr;
+
 	}; 
+
+
+
+    
 
     	template < class iterator >
 	class const_vector_reverseIterator {
@@ -278,6 +285,9 @@ namespace ft
 			typedef typename iterator::pointer			pointer;
 			typedef typename iterator::const_pointer	const_pointer;
 			typedef typename iterator::difference_type	difference_type;
+
+        private :
+			pointer _ptr;
 
 			const_vector_reverseIterator(void) {}
 			const_vector_reverseIterator(pointer ptr) { _ptr = ptr; }
@@ -324,8 +334,6 @@ namespace ft
 			const_reference operator [](difference_type n) const { return *(_ptr + n); }
 
 			pointer get_ptr() { return _ptr; }
-		private :
-			pointer _ptr;
 	};
 
 #endif
