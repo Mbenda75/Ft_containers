@@ -6,25 +6,26 @@
 
  int main()
 {
-   ft::vector<int> value;
+    ft::vector<int> value;
    //std::vector<int> val(5, 5);
    //std::vector<int> v(val);
-    value.push_back(1);
-    value.push_back(2);
-    value.push_back(3);
-    value.push_back(4);
     value.push_back(5);
+    value.push_back(4);
+    value.push_back(3);
+    value.push_back(2);
+    value.push_back(1);
 
     //value.pop_back();
     //value.resize( 7 , 9);
     //value.push_back(7);
-   value.insert(value.begin()+ 2, 2, 0);
-   std::cout << " size == " << value.size() << std::endl;
+    value.insert(value.begin(), 2, 0);
+    std::cout << " size == " << value.size() << std::endl;
     ft::vector<int>::iterator it;
     for (it = value.begin(); it != value.end(); *it++)
     {
       std::cout << *it << std::endl;  
     }   
+    value.clear();
 }
   
  /*  

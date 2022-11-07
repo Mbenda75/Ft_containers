@@ -181,6 +181,7 @@ class vector
 			_capacity = n;
 			_size = n;
 			_data = new_data;
+			_allocator.deallocate(new_data, n);
 		}
 
 	/*---------------------------MODIFIERS FUNCTIONS------------------------------------------*/
@@ -262,19 +263,29 @@ class vector
 	{
 		value_type *new_ins = _allocator.allocate(count + _size);
 
-		//difference_type diff =  pos - begin();
-			for (size_t i = 0; i < count;i++)
-			{
-				_allocator.construct(new_ins, val);
-			}
-			for (size_t j = 0 ; j < _size ;j++)
-			{
-				//std::cout << "avant construc == " << *(new_ins + count+ j) << std::endl;
-				_allocator.construct(new_ins + count + j, *(_data + j));
-				//std::cout << "apres construc == " << *(new_ins + count + j) << std::endl;
-			}
-			resize(_size + count, val);
-			_data = new_ins; 
+		difference_type diff =  pos - begin();
+		
+		size_t j =0;
+		for (iterator it = this->begin();it != pos;*it++)
+		{
+			_allocator.construct(new_ins + j, _data[j]);
+			//_allocator.destroy(_data + j);
+			j++;
+		}
+		size_t save = j;
+	  	for (size_t i = 0; i < count;i++)
+		{
+			_allocator.construct(new_ins + j, val);
+			j++;
+		}   
+   	 	for (size_t i = j ; i < _size + count ;i++)
+		{
+			_allocator.construct(new_ins+ i, _data[save]);
+			 //_allocator.destroy(_data + save);
+			save++;
+		}  
+		resize(_size + count, val);  
+		_data = new_ins;
 	}
 
 /* 	public:

@@ -173,6 +173,21 @@ i++	It	            It               ip = i; ++i; return ip;
 	};
 
 
+	iterator insert(iterator position, const value_type &val)
+	{
+    	iterator old_head = begin();
+
+    	size_t offset = 0;
+
+    	insert(position, 1, val);
+
+    	offset = begin() - old_head;
+
+    	return position + offset;
+	}
+
+
+
 	void 			insert (iterator position, size_type n, const value_type& val)
 	{
 				if (position > this->end() || position < this->begin())
