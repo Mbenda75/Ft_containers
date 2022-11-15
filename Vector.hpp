@@ -4,11 +4,9 @@
 # include <iostream>
 # include <string>
 # include "Vector_iterator.hpp"
-
+# include "reverse_iterator.hpp"
 
 //typename mot clé indique que ce paramètre est un espace réservé pour un type
-template<typename vector>
-class vectorIterator;
 
 namespace ft{
 
@@ -36,10 +34,12 @@ class vector
 
 		/*------------------------VECTOR ITERATOR ------------------------------------*/
 
-		typedef vectorIterator<value_type> iterator;
-		typedef const_vectorIterator<value_type> const_iterator;
-		typedef vector_reverseIterator<value_type> reverse_iterator;
-		typedef const_vector_reverseIterator<value_type> const_reverse_iterator;
+		typedef ft::vectorIterator<value_type> iterator;
+		typedef ft::const_vectorIterator<value_type> const_iterator;
+
+
+		typedef ft::reverseIterator<iterator> reverse_iterator;
+		typedef ft::const_reverseIterator<iterator> const_reverse_iterator;
 
 	private:
 			value_type		*_data;
@@ -129,17 +129,15 @@ class vector
      		{ return const_iterator(_data + _size); }
 
 	/*----------------------------------REVERSE ITERATOR FUNCTION-----------------------------------------------*/
-		reverse_iterator rbegin()
-      		{ return reverse_iterator(end()); }
+	
+		reverse_iterator rbegin() { return reverse_iterator(_data + _size - 1); }
 
-	  	const_reverse_iterator rbegin() const
-      		{ return const_reverse_iterator(end()); }
+		const_reverse_iterator rbegin() const { return rbegin(); }
 
-		reverse_iterator rend() 
-		    { return reverse_iterator(begin()); }
+		reverse_iterator rend() { return reverse_iterator(_data - 1); }
+		
+		const_reverse_iterator rend() const { return rend(); }
 
-		const_reverse_iterator rend() const 
-      		{ return const_reverse_iterator(begin()); } 
 
 		vector &	operator=( vector const & rhs );
 
@@ -159,11 +157,10 @@ class vector
 		bool empty() const { return _size == 0; }
 		
 		size_type max_size() const {return _allocator.max_size();}
-
+ 
 		void resize (size_type n, value_type val = value_type()) 
 		{
-			value_type *new_data;
-			new_data = _allocator.allocate(n);
+			value_type *new_data = _allocator.allocate(n);
 			if (n > _size) {
 				for (size_t i = 0; i < _size; i++)
 					_allocator.construct(new_data + i, *(_data + i));
@@ -181,8 +178,17 @@ class vector
 			_capacity = n;
 			_size = n;
 			_data = new_data;
+			_allocator.destroy(new_data);
 			_allocator.deallocate(new_data, n);
-		}
+		} 
+/* 
+		void resize (size_type n, value_type val = value_type()) 
+		{
+		    if (n < _size)
+     			erase(begin() + n, end());
+    		else
+      			insert(end(), n - _size, val);
+		} */
 
 	/*---------------------------MODIFIERS FUNCTIONS------------------------------------------*/
 
@@ -253,18 +259,43 @@ class vector
 			_size = 0;
 		}
 	}
-/* 
-	iterator insert(const_iterator pos, const T& val )
+
+	void swap (vector& other) 
 	{
-		vector tmp(pos);
+		std::swap(_data, other._data);
+		std::swap(_size, other._size);
+		std::swap(_capacity, other._capacity);
+		std::swap(_allocator, other._allocator);
 	}
- */
+ 
+	void insert(iterator pos, const T& val )
+	{
+		value_type *new_d = _allocator.allocate(_size + 1);
+
+		size_t i  = 0;
+		size_t j  = 0;
+		for (iterator it = this->begin(); it != this->end() + 1 ;*it++)
+		{
+			if (it == pos )
+			{
+				_allocator.construct(new_d + i, val);
+				i++;
+			}
+			else
+			{
+				_allocator.construct(new_d + i, _data[j]);
+				i++;
+				j++;
+			}
+		}
+		resize(_size + 1, val);
+		_data = new_d;
+	}
+ 
 	void insert(iterator pos, size_type count, const T& val )
 	{
 		value_type *new_ins = _allocator.allocate(count + _size);
 
-		difference_type diff =  pos - begin();
-		
 		size_t j =0;
 		for (iterator it = this->begin();it != pos;*it++)
 		{
@@ -290,9 +321,8 @@ class vector
 
 /* 	public:
 		template< class InputIt >
-		iterator insert( const_iterator pos, InputIt first, InputIt last );	
-
-		void swap( vector& other );//(until c++17) */
+		iterator insert( iterator pos, InputIt first, InputIt last);	
+ */
 };
 }
 
