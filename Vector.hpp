@@ -53,24 +53,20 @@ class vector
 	public:
 		//default (1)
 		explicit vector( const Allocator &alloc = Allocator() ):
-		_data(NULL), _size(0), _capacity(0), _allocator(alloc)
-		{
-			//std::cout << "default vectore const" << std::endl;
+		_data(NULL), _size(0), _capacity(0), _allocator(alloc){
 			return;
 		}
 
 		//fill (2)	
 		explicit vector( size_type n, const T& value = T(), const Allocator& alloc = Allocator() ): 
-		_data(NULL), _size(0), _capacity(0), _allocator(alloc)
-		{
+		_data(NULL), _size(0), _capacity(0), _allocator(alloc){
 			resize(n, value);
 		}
 
 		//range (3)
 		template< typename InputIt >
 		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() ): 
-		_data(NULL), _size(0), _capacity(0), _allocator(alloc)
-		{
+		_data(NULL), _size(0), _capacity(0), _allocator(alloc){
 				while (first != last) {
 					push_back(*first);
 					first++;
@@ -79,13 +75,11 @@ class vector
 
 		//copy (4)	
 		vector( const vector& cpy ): 
-		_data(NULL), _size(0), _capacity(0), _allocator(cpy._allocator)
-		{
+		_data(NULL), _size(0), _capacity(0), _allocator(cpy._allocator){
 			*this = cpy;
 		}
 
-		~vector( void )
-		{
+		~vector( void ){
 			clear();
 			_allocator.deallocate(_data, _size);
 		}
@@ -95,8 +89,7 @@ class vector
 	
   		const_reference operator[](size_type pos) const { return _data[pos]; }
 
-  		reference at(size_type pos) 
-		{
+  		reference at(size_type pos) {
   		  if (pos >= _size) throw std::out_of_range("vector");
   		  return _data[pos];
   		}
@@ -160,35 +153,11 @@ class vector
  
 		void resize (size_type n, value_type val = value_type()) 
 		{
-			value_type *new_data = _allocator.allocate(n);
-			if (n > _size) {
-				for (size_t i = 0; i < _size; i++)
-					_allocator.construct(new_data + i, *(_data + i));
-				for (size_t i = 0; i < n - _size; i++)
-					_allocator.construct(new_data + _size + i, val);
-			}
-			else {
-				for (size_t i = 0; i < n; i++)
-					_allocator.construct(new_data + i, *(_data + i));
-			}
-			if (_size) {
-				_allocator.destroy(_data);
-				_allocator.deallocate(_data, _capacity);
-			}
-			_capacity = n;
-			_size = n;
-			_data = new_data;
-			_allocator.destroy(new_data);
-			_allocator.deallocate(new_data, n);
-		} 
-/* 
-		void resize (size_type n, value_type val = value_type()) 
-		{
 		    if (n < _size)
      			erase(begin() + n, end());
     		else
       			insert(end(), n - _size, val);
-		} */
+		}
 
 	/*---------------------------MODIFIERS FUNCTIONS------------------------------------------*/
 
@@ -196,22 +165,19 @@ class vector
 
 		size_type size() const { return _size; }
 
-		void pop_back () 
-		{
+		void pop_back () {
 			if (!_size)
 				return ;
 			_allocator.destroy(_data + _size - 1);
 			_size--;
 		}
 
-		void push_back( const T & val )
-		{
+		void push_back( const T & val ){
 			if (_capacity == 0)
 				reserve(1);
-			while (_size + 1 > _capacity)
+			if (_size + 1 > _capacity)
 				reserve(_capacity * 2);
-			_data[_size] = val;
-			_size++;
+			_allocator.construct(_data + _size++, val);
 		}
 
 		void reserve(size_type new_cap) 
@@ -249,8 +215,7 @@ class vector
 				return (first);
 			}     
 
-	void clear()
-	{
+	void clear(){
 		if (_size > 0)
 		{
 			iterator it = this->begin();
@@ -260,63 +225,41 @@ class vector
 		}
 	}
 
-	void swap (vector& other) 
-	{
+	void swap (vector& other) {
 		std::swap(_data, other._data);
 		std::swap(_size, other._size);
 		std::swap(_capacity, other._capacity);
 		std::swap(_allocator, other._allocator);
 	}
- 
-	void insert(iterator pos, const T& val )
+  
+	iterator insert(iterator position, const value_type &val)
 	{
-		value_type *new_d = _allocator.allocate(_size + 1);
-
-		size_t i  = 0;
-		size_t j  = 0;
-		for (iterator it = this->begin(); it != this->end() + 1 ;*it++)
-		{
-			if (it == pos )
-			{
-				_allocator.construct(new_d + i, val);
-				i++;
-			}
-			else
-			{
-				_allocator.construct(new_d + i, _data[j]);
-				i++;
-				j++;
-			}
-		}
-		resize(_size + 1, val);
-		_data = new_d;
+		difference_type index = position - begin();
+		insert(position, 1, val);
+		return begin() + index;
 	}
  
 	void insert(iterator pos, size_type count, const T& val )
 	{
-		value_type *new_ins = _allocator.allocate(count + _size);
-
-		size_t j =0;
-		for (iterator it = this->begin();it != pos;*it++)
-		{
-			_allocator.construct(new_ins + j, _data[j]);
-			//_allocator.destroy(_data + j);
-			j++;
+		size_type index = pos - this->begin();
+		if (_size + count > _capacity){
+			size_t new_capacity = 0;
+				if (_capacity == 0)
+					new_capacity = 1;
+				else
+					new_capacity = _size * 2;
+				if (new_capacity < _size + count)
+					new_capacity = _size + count;
+				reserve(new_capacity);
 		}
-		size_t save = j;
-	  	for (size_t i = 0; i < count;i++)
-		{
-			_allocator.construct(new_ins + j, val);
-			j++;
-		}   
-   	 	for (size_t i = j ; i < _size + count ;i++)
-		{
-			_allocator.construct(new_ins+ i, _data[save]);
-			 //_allocator.destroy(_data + save);
-			save++;
-		}  
-		resize(_size + count, val);  
-		_data = new_ins;
+			for (size_type i = this->_size; i > index; i--) {
+				this->_allocator.construct(this->_data + i + count - 1, *(this->_data + i - 1));
+				this->_allocator.destroy(this->_data + i - 1);
+			}
+			for (size_type i = 0; i < count; i++) {
+				this->_allocator.construct(this->_data + index + i, val);
+			} 
+		_size = _size + count; 
 	}
 
 /* 	public:

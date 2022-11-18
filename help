@@ -1,17 +1,46 @@
-  template <class InputIterator>
-  typename ft::enable_if<!ft::is_integral<InputIterator>::value, void>::type
-  insert(iterator position, InputIterator first, InputIterator last) 
-  {
-    difference_type end_at = position.get_elem() - head;
-    InputIterator ite = first;
-    difference_type n = distance(first, last);
-    if (n == 0) return;
-    reserve(len + n);
-    for (difference_type i = len - 1; i >= end_at; i--) {
-      allocator.construct(&head[i + n], head[i]);
-      allocator.destroy(&head[i]);
-    }
-    for (difference_type i = 0; i < n; i++)
-      allocator.construct(&head[end_at + i], *ite++);
-    len += n;
-  }
+
+  std::cout <<"cap insert= " <<  capacity() << std::endl;
+	  std::cout <<"csize insert = " <<  size() << std::endl;
+
+	 	for (iterator it = this->begin();it != pos;*it++)
+		{
+			_allocator.construct(new_ins + j, _data[j]);
+			//_allocator.destroy(_data + j);
+			j++;
+		}
+		size_t save = j;
+	  	for (size_t i = 0; i < count;i++)
+		{
+			_allocator.construct(new_ins + j, val);
+			j++;
+		}   
+   	 	for (size_t i = j ; i < _size + count ;i++)
+		{
+			_allocator.construct(new_ins+ i, _data[save]);
+			 //_allocator.destroy(_data + save);
+			save++;
+		} 
+
+    		void resize (size_type n, value_type val = value_type()) 
+		{
+			value_type *new_data = _allocator.allocate(n);
+			if (n > _size) {
+				for (size_t i = 0; i < _size; i++)
+					_allocator.construct(new_data + i, *(_data + i));
+				for (size_t i = 0; i < n - _size; i++)
+					_allocator.construct(new_data + _size + i, val);
+			}
+			else {
+				for (size_t i = 0; i < n; i++)
+					_allocator.construct(new_data + i, *(_data + i));
+			}
+			if (_size) {
+				_allocator.destroy(_data);
+				_allocator.deallocate(_data, _capacity);
+			}
+			_capacity = n;
+			_size = n;
+			_data = new_data;
+			//_allocator.destroy(new_data);
+			//_allocator.deallocate(new_data, n);
+		} 

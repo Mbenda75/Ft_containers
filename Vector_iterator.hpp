@@ -26,7 +26,7 @@ namespace ft
             {
 
             }
-
+            //operator    vectorIterator<const T>() const  {return (vectorIterator<const T>(_ptr));}
 
             vectorIterator<T>& operator++()//incre apres assisn
             {

@@ -4,34 +4,31 @@
 
 int main()
 {
-    ft::vector<int> value;
+   ft::vector<int> vec;
    //std::vector<int> val(5, 5);
    //std::vector<int> v(val);
-   value.push_back(5);
-   value.push_back(4);
-   value.push_back(3);
-   value.push_back(2);
-   value.push_back(1);
-
-   value.pop_back();
-   value.resize( 10 , 9);
-   //value.push_back(7);
-   //value.insert(value.begin() +3, -5);
-   std::cout << " size == " << value.size() << std::endl;
+   for ( int i = 1 ; i < 6 ; ++i ){
+      vec.push_back (i);}
+   
+   vec.pop_back();
+   std::cout << " size avant resize== " << vec.size() << std::endl;
+   vec.resize( 10 , 9);
+   vec.push_back(7);
+   //std::cout <<"cap before reser = " <<  vec.capacity() << std::endl;
+   vec.insert(vec.begin() +3, -5);
    ft::vector<int>::iterator it;
-   for (it = value.begin(); it != value.end(); *it++)
+   for (it = vec.begin(); it != vec.end(); *it++)
    {
      std::cout << *it << std::endl;  
    }  
-   
-   std::cout <<"cap before reser = " <<  value.capacity() << std::endl;
-   value.reserve(13);
-   std::cout <<"cap after reser = " <<  value.capacity() << std::endl;
-   std::cout << "begin === " << *(value.begin()) << std::endl;
-   std::cout <<"end ==== " <<*(value.end()) << std::endl;
-   std::cout << "front === " << value.front() << std::endl;
-   std::cout << "back === " << value.back() << std::endl;
-   std::cout << "size === " << value.max_size() << std::endl;  
+   vec.reserve(15);
+      std::cout << " last size == " << vec.size() << std::endl;
+   std::cout <<"cap after reser = " <<  vec.capacity() << std::endl;
+   std::cout << "begin === " << *(vec.begin()) << std::endl;
+   std::cout << "front === " << vec.front() << std::endl;
+   std::cout << "back === " << vec.back() << std::endl;
+   std::cout << "max size === " << vec.max_size() << std::endl;
+   std::cout <<"end ==== " <<*(vec.end()) << std::endl;
 }  
   
 

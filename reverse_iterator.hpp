@@ -151,8 +151,7 @@ template < class Ite >
 		    }
 		    ~const_reverseIterator() {}
 
-		    iterator_type base() const
-		    {
+		    iterator_type base() const{
 		    	return _ptr;
 		    }
 		  	const_reverseIterator operator++() {
