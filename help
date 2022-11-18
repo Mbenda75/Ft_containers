@@ -44,3 +44,49 @@
 			//_allocator.destroy(new_data);
 			//_allocator.deallocate(new_data, n);
 		} 
+
+
+		  template <class InputIterator>
+  typename ft::enable_if<!ft::is_integral<InputIterator>::value, void>::type
+  insert(iterator position, InputIterator first, InputIterator last) {
+    difference_type end_at = position.get_elem() - head;
+    InputIterator ite = first;
+    difference_type n = distance(first, last);
+    if (n == 0) return;
+    reserve(len + n);
+    for (difference_type i = len - 1; i >= end_at; i--) {
+      allocator.construct(&head[i + n], head[i]);
+      allocator.destroy(&head[i]);
+    }
+    for (difference_type i = 0; i < n; i++)
+      allocator.construct(&head[end_at + i], *ite++);
+    len += n;
+  }
+
+
+		template <class InputIterator>
+    		void insert (iterator position, InputIterator first, InputIterator last) {
+				size_t i = 0;
+				difference_type diff = position - this->begin();
+
+				while (first != last) {
+					first++;
+					i++;
+				}
+				first -= i;
+				while (_size_alloc - _size < i)
+					_extend();
+
+				vector tmp(begin() + diff, end());
+
+				for (size_t j = 0; j < tmp.size(); j++)
+					pop_back();
+				while (first != last)
+					push_back(*(first++));
+				for (iterator it = tmp.begin(); it != tmp.end(); it++)
+				
+
+		if ( std::equal (vector_1.begin(), vector_1.end(), v1) )
+        std::cout << "The contents of both sequences are equal.\n";
+    else
+        printf("The contents of both sequences differ."

@@ -3,6 +3,10 @@
 
 #include "Iterator_traits.hpp"
 
+
+/*	https://en.cppreference.com/w/cpp/iterator/reverse_iterator 
+	https://learn.microsoft.com/fr-fr/cpp/standard-library/reverse-iterator-class?view=msvc-170#op_at 
+*/
 namespace ft {
 
 template < class Ite >
@@ -23,7 +27,7 @@ template < class Ite >
 		    reverseIterator() : _ptr(iterator_type()) {}
 		    reverseIterator(iterator_type it) : _ptr(it) {}
 		    template<class Iterator>
-		    reverseIterator(reverseIterator<Iterator> const &it) : _ptr(it.base()) {}
+		    reverseIterator(reverseIterator<Iterator> const &it) : _ptr(it._ptr) {}
 		    reverseIterator &operator=(reverseIterator const &ite1)
 		    {
 			  if (this == &ite1)

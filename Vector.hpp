@@ -4,9 +4,12 @@
 # include <iostream>
 # include <string>
 # include "Vector_iterator.hpp"
+# include "equal.hpp"
 # include "reverse_iterator.hpp"
 
-//typename mot clé indique que ce paramètre est un espace réservé pour un type
+/*	https://gcc.gnu.org/onlinedocs/gcc-4.6.3/libstdc++/api/a01069_source.html#l00908 
+	https://en.cppreference.com/w/cpp/container/vector 
+	https://learn.microsoft.com/fr-fr/cpp/standard-library/vector-class?view=msvc-170 */
 
 namespace ft{
 
@@ -59,8 +62,11 @@ class vector
 
 		//fill (2)	
 		explicit vector( size_type n, const T& value = T(), const Allocator& alloc = Allocator() ): 
-		_data(NULL), _size(0), _capacity(0), _allocator(alloc){
-			resize(n, value);
+		_data(NULL), _size(n), _capacity(n), _allocator(alloc){
+			_data = _allocator.allocate(n);
+			for (size_type i = 0; i < n; i++) {
+				_allocator.construct(_data + i, value);
+			}
 		}
 
 		//range (3)
@@ -84,6 +90,15 @@ class vector
 			_allocator.deallocate(_data, _size);
 		}
 
+		vector &	operator=( vector const & rhs )
+		{
+			if (this != &rhs)
+			{
+				clear();
+				insert(end(), rhs.begin(), rhs.end());
+			}
+			return (*this);
+		}
 	/*-----------------------------------ELEMENT ACCESS-------------------------------------------------*/
 		reference operator[](size_type pos)  { return _data[pos]; }
 	
@@ -130,10 +145,6 @@ class vector
 		reverse_iterator rend() { return reverse_iterator(_data - 1); }
 		
 		const_reverse_iterator rend() const { return rend(); }
-
-
-		vector &	operator=( vector const & rhs );
-
 
  	/*-----------------------------CAPACITY FUNCTIONS--------------------------------------- */
 		template <class InputIterator>
@@ -207,7 +218,7 @@ class vector
 			}
 
 
-			iterator erase (iterator first, iterator last) {
+		iterator erase (iterator first, iterator last) {
 				iterator tmp(first);
 
 				while (tmp++ != last)
@@ -215,43 +226,44 @@ class vector
 				return (first);
 			}     
 
-	void clear(){
-		if (_size > 0)
-		{
-			iterator it = this->begin();
-			while (it != this->end())
-				_allocator.destroy(&(*it++));
-			_size = 0;
+		void clear(){
+			if (_size > 0)
+			{
+				iterator it = this->begin();
+				while (it != this->end())
+					_allocator.destroy(&(*it++));
+				_size = 0;
+			}
 		}
-	}
 
-	void swap (vector& other) {
-		std::swap(_data, other._data);
-		std::swap(_size, other._size);
-		std::swap(_capacity, other._capacity);
-		std::swap(_allocator, other._allocator);
-	}
-  
-	iterator insert(iterator position, const value_type &val)
-	{
-		difference_type index = position - begin();
-		insert(position, 1, val);
-		return begin() + index;
-	}
- 
-	void insert(iterator pos, size_type count, const T& val )
-	{
-		size_type index = pos - this->begin();
-		if (_size + count > _capacity){
-			size_t new_capacity = 0;
-				if (_capacity == 0)
-					new_capacity = 1;
-				else
-					new_capacity = _size * 2;
-				if (new_capacity < _size + count)
-					new_capacity = _size + count;
-				reserve(new_capacity);
+		void swap (vector& other) {
+			std::swap(_data, other._data);
+			std::swap(_size, other._size);
+			std::swap(_capacity, other._capacity);
+			std::swap(_allocator, other._allocator);
 		}
+	
+		void insert(iterator position, const value_type &val)
+		{
+			difference_type index = position - begin();
+			insert(position, 1, val);
+			//return begin() + index;
+
+		}
+	
+		void insert(iterator pos, size_type count, const T& val )
+		{
+			size_type index = pos - this->begin();
+			if (_size + count > _capacity){
+				size_t new_cap = 0;
+				if (_capacity == 0)
+					new_cap = 1;
+				else
+					new_cap = _size * 2;
+				if (new_cap < _size + count)
+					new_cap = _size + count;
+				reserve(new_cap);
+			}
 			for (size_type i = this->_size; i > index; i--) {
 				this->_allocator.construct(this->_data + i + count - 1, *(this->_data + i - 1));
 				this->_allocator.destroy(this->_data + i - 1);
@@ -259,8 +271,8 @@ class vector
 			for (size_type i = 0; i < count; i++) {
 				this->_allocator.construct(this->_data + index + i, val);
 			} 
-		_size = _size + count; 
-	}
+			_size = _size + count; 
+		}
 
 /* 	public:
 		template< class InputIt >

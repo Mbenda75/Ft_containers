@@ -1,6 +1,23 @@
 #ifndef VECTOR_ITERATOR_HPP
 # define VECTOR_ITERATOR_HPP
 
+/* 
+                | acces      | read         | write    | iterate      | compare
+input :         | ->         | =*i          |          | ++           | == , !=             
+outpout :       |            |              |*i =      | ++           |          
+forward :       | ->         |  =*i         |*i =      | ++           | == , !=                 
+bi-directional :|            |  =*i         |*i =      | ++,--        | == , !=                  
+random-access : | >          |  =*i         |*i =      | ++,--,+,-,+= | == , != , <,>,<=,>=         */               
+
+
+
+/* https://gcc.gnu.org/onlinedocs/gcc-4.6.3/libstdc++/api/a01052_source.html
+   https://www.geeksforgeeks.org/introduction-iterators-c 
+   https://www.geeksforgeeks.org/bidirectional-iterators-in-cpp/
+   https://www.geeksforgeeks.org/random-access-iterators-in-cpp/ 
+   https://stacklima.com/introduction-aux-iterateurs-en-c/ */
+   
+
 namespace ft
 {
     template<typename T>

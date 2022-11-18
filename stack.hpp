@@ -3,6 +3,12 @@
 
 #include "Vector.hpp"
 
+
+/*	https://www.guru99.com/stack-in-cpp-stl.html 
+	https://en.cppreference.com/w/cpp/container/stack
+	https://www.geeksforgeeks.org/stack-in-cpp-stl/?ref=gcse
+*/
+
 namespace ft{
 	template<class T, class container = ft::vector<T> >
 	class stack {

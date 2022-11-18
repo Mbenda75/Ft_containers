@@ -3,6 +3,10 @@
 
 # include <iostream>
 
+
+/*  https://en.cppreference.com/w/cpp/iterator/iterator_traits
+    https://cplusplus.com/reference/iterator/iterator_traits/ */
+    
 namespace ft
 {
     template< typename Iter >

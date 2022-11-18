@@ -1,12 +1,13 @@
 #include "Vector.hpp"
+#include "equal.hpp"
 #include <vector>
 
 
 int main()
 {
    ft::vector<int> vec;
-   //std::vector<int> val(5, 5);
-   //std::vector<int> v(val);
+   //ft::vector<int> val(5, 5);
+   //ft::vector<int> v(val);
    for ( int i = 1 ; i < 6 ; ++i ){
       vec.push_back (i);}
    
