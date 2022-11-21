@@ -74,7 +74,7 @@ class vector
 		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() ): 
 		_data(NULL), _size(0), _capacity(0), _allocator(alloc){
 				while (first != last) {
-					push_back(*first);
+					push_back(first);
 					first++;
 				}
 		}
@@ -207,14 +207,14 @@ class vector
     		_data = new_data;
 		}
 
-		iterator erase (iterator position) {
-				vector	tmp(position + 1, end());
+		iterator erase (iterator pos) {
+				vector	tmp(pos + 1, end());
 				
 				for (size_t i = 0; i <= tmp.size(); i++)
 					pop_back();
 				for (iterator it = tmp.begin(); it != tmp.end(); it++)
 					push_back(*it);
-				return (position);
+				return (pos);
 			}
 
 
@@ -264,20 +264,61 @@ class vector
 					new_cap = _size + count;
 				reserve(new_cap);
 			}
-			for (size_type i = this->_size; i > index; i--) {
-				this->_allocator.construct(this->_data + i + count - 1, *(this->_data + i - 1));
-				this->_allocator.destroy(this->_data + i - 1);
+			for (size_type i = _size; i > index; i--) {
+				_allocator.construct(_data + i + count - 1, *(_data + i - 1));
+				_allocator.destroy(_data + i - 1);
 			}
 			for (size_type i = 0; i < count; i++) {
-				this->_allocator.construct(this->_data + index + i, val);
+				_allocator.construct(_data + index + i, val);
 			} 
 			_size = _size + count; 
 		}
-
-/* 	public:
-		template< class InputIt >
-		iterator insert( iterator pos, InputIt first, InputIt last);	
- */
+			template< class InputIt >
+		void insert( iterator position, InputIt first, InputIt last)
+		{ 
+			size_type pos = position - begin();
+			std::cout << "first =" << *first <<std::endl;
+			std::cout << "position =" << *position <<std::endl;
+			std::cout << "pos =" << pos<<std::endl;
+			size_type nb = 0;
+			
+			for (InputIt tmp = first; tmp != last; tmp++) {
+					 std::cout << "tmp = " <<*tmp << std::endl;  
+				nb++;
+			}
+			if (nb + _size > _capacity)
+			{
+				size_t new_capacity = 0;
+				if (_capacity == 0)
+					new_capacity = 1;
+				else
+					new_capacity = _size * 2;
+				if (new_capacity < _size + nb)
+					new_capacity = _size + nb;
+				reserve(new_capacity); // (otherwhise iterator `pos` is invalidated)
+			}
+			std::cout << "nb == " << nb << std::endl;
+			std::cout << "size == " << _size << std::endl;
+	 		for (size_t i = _size - 1; i >= (size_t)pos; i--){
+				// move elements nb times to the right
+				_allocator.construct(&_data[i + nb], _data[i]);
+				 std::cout << "_data[i + nb] = " << _data[i + nb] << std::endl; 
+				std::cout << "_data[i ] = " << _data[i] << std::endl;  // copy constructor
+				_allocator.destroy(&_data[i]);					// call destructor
+			}
+	/* 		   for (iterator it = begin(); it != end(); *it++)
+   			{
+    			 std::cout << "it insert = " <<*it << std::endl;  
+   			}   */
+		
+			for (InputIt ite = first; ite != last; ++ite)
+			{
+				 //std::cout << "it2 insert = " <<*ite << std::endl;  
+				_allocator.construct(&_data[pos++], *ite); 
+   			}  
+			_size += nb;
+		}
+ 
 };
 }
 
