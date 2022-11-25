@@ -7,8 +7,7 @@ input :         | ->         | =*i          |          | ++           | == , !=
 outpout :       |            |              |*i =      | ++           |          
 forward :       | ->         |  =*i         |*i =      | ++           | == , !=                 
 bi-directional :|            |  =*i         |*i =      | ++,--        | == , !=                  
-random-access : | >          |  =*i         |*i =      | ++,--,+,-,+= | == , != , <,>,<=,>=         */               
-
+random-access : | >          |  =*i         |*i =      | ++,--,+,-,+= | == , != , <,>,<=,>=  */        
 
 
 /* https://gcc.gnu.org/onlinedocs/gcc-4.6.3/libstdc++/api/a01052_source.html
@@ -136,26 +135,26 @@ namespace ft
 
             }
 
-            const_vectorIterator<T>& operator++()//incre apres assisn
+            const_vectorIterator<T>& operator++()
             {
                 _ptr++;
                 return *this;
             }
 
-            const_vectorIterator<T> operator++(int)//incre avant assign
+            const_vectorIterator<T> operator++(int)
             {
                 const_vectorIterator iterator = *this;
                 ++(*this);
                 return iterator;
             }
 
-            const_vectorIterator<T>& operator--()//incre apres assign
+            const_vectorIterator<T>& operator--()
             {
                 _ptr--;
                 return *this;
             }
 
-            const_vectorIterator<T> operator--(int)//incre avant assign
+            const_vectorIterator<T> operator--(int)
             {
                 const_vectorIterator iterator = *this;
                 --(*this);
@@ -164,7 +163,7 @@ namespace ft
 
             reference operator[](int index)
             {
-                return *(_ptr + index);//_ptr[index]
+                return *(_ptr + index);
             }
 
             reference operator*() const { return *_ptr; }

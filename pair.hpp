@@ -1,6 +1,9 @@
 #ifndef PAIR_HPP
 # define PAIR_HPP
 
+/*	https://gcc.gnu.org/onlinedocs/gcc-4.6.3/libstdc++/api/a01060_source.html 
+	https://learn.microsoft.com/fr-fr/cpp/standard-library/pair-structure?view=msvc-170 */
+
 namespace ft {
 template<class T1, class T2> 
 	struct pair
@@ -10,6 +13,7 @@ template<class T1, class T2>
 		
 		first_type	first;
 		second_type	second;
+
 		pair(): first(first_type()), second(second_type()) {}
 		
 		pair( const T1& x, const T2& y ) : first(x), second(y) {}
@@ -30,7 +34,6 @@ template<class T1, class T2>
 	pair<T1,T2> make_pair( T1 t, T2 u ) {
 		return(pair<T1, T2>(t, u));
 	}
-	
 	template< class T1, class T2 >
 	bool operator==( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs ) {
 		return ((lhs.first == rhs.first) && (lhs.second == rhs.second));

@@ -188,7 +188,7 @@ template < class Ite >
 			reference operator [](difference_type n) const { return *(_ptr + n); }
 	};
 
-	template <class Iterator, class Iter>
+		template <class Iterator, class Iter>
 	    bool operator==(const const_reverseIterator<Iterator> &ite1, const const_reverseIterator<Iter> &ite2)
 	    {
 	    	return (ite1.base() == ite2.base());

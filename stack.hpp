@@ -1,7 +1,7 @@
 #ifndef STACK_HPP
 # define STACK_HPP
 
-#include "Vector.hpp"
+#include "vector.hpp"
 
 
 /*	https://www.guru99.com/stack-in-cpp-stl.html 
@@ -25,7 +25,7 @@ namespace ft{
 		public:
 			stack (const container_type &ct = container_type()) : _data(ct) {}
 
-			stack(const stack &rhs): _data(rhs._data){}
+			stack(const stack &rhs): _data(rhs._datawho){}
 			
 			~stack() {}
 			
