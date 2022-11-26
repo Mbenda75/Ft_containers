@@ -271,13 +271,6 @@ class vector
 				_size = 0;
 			}
 		}
-
-		void swap (vector& other) {
-			std::swap(_data, other._data);
-			std::swap(_size, other._size);
-			std::swap(_capacity, other._capacity);
-			std::swap(_allocator, other._allocator);
-		}
 	
 		iterator insert(iterator pos, const value_type &val)
 		{
@@ -343,6 +336,7 @@ class vector
 			_size += nb;
 		}
 };
+	/*---------------------------NON MEMBER CLASS--------------------------------------------*/
 
 		template <class T, class Alloc>
 		bool operator==	(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
@@ -371,6 +365,7 @@ class vector
 		bool operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 		}
+		
 
 }
 
