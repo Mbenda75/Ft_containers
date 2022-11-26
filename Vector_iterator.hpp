@@ -34,41 +34,56 @@ namespace ft
             pointer _ptr;
 
         public:
-            vectorIterator()
-            {
-            }
+            vectorIterator()  {}
 
-            vectorIterator(pointer ptr): _ptr(ptr)
-            {
+            vectorIterator(pointer ptr): _ptr(ptr) {}
 
-            }
-            //operator    vectorIterator<const T>() const  {return (vectorIterator<const T>(_ptr));}
+            vectorIterator(const vectorIterator&lhs) : _ptr(lhs._ptr) {}
 
-            vectorIterator<T>& operator++()//incre apres assisn
+            operator vectorIterator<value_type const>() const
+		        {
+		        	return vectorIterator<value_type const>(_ptr);
+		        }
+            
+            vectorIterator& operator++()//incre apres assisn
             {
                 _ptr++;
                 return *this;
             }
 
-            vectorIterator<T> operator++(int)//incre avant assign
+            vectorIterator operator++(int)//incre avant assign
             {
                 vectorIterator iterator = *this;
                 ++(*this);
                 return iterator;
             }
 
-            vectorIterator<T>& operator--()//incr e apres assign
+            vectorIterator& operator--()//incr e apres assign
             {
                 _ptr--;
                 return *this;
             }
 
-            vectorIterator<T> operator--(int)//incre avant assign
+            vectorIterator operator--(int)//incre avant assign
             {
                 vectorIterator iterator = *this;
                 --(*this);
                 return iterator;
             }
+
+
+		        vectorIterator &operator+=(difference_type n)
+		        {
+		        	_ptr += n;
+		        	return (*this);
+		        }
+
+            	vectorIterator &operator-=(difference_type n)
+		        {
+		        	_ptr -= n;
+		        	return (*this);
+		        }
+
 
             reference operator[](int index)
             {
@@ -84,6 +99,7 @@ namespace ft
 			      difference_type operator +(vectorIterator other) { return _ptr + other._ptr; }
 			      difference_type operator -(vectorIterator other) { return _ptr - other._ptr; }
 
+          
             bool operator==(const vectorIterator &rhs) {
               return _ptr == rhs._ptr;
             }
@@ -110,97 +126,6 @@ namespace ft
 
     };
 
-
-    template<typename T>
-    class const_vectorIterator
-    {
-
-        public:
-            typedef T                     value_type;
-            typedef size_t                size_type;
-            typedef std::ptrdiff_t        difference_type;
-            typedef const T *             pointer;
-            typedef const T &             reference;
-
-        private:
-            pointer _ptr;
-
-        public:
-            const_vectorIterator()
-            {
-            }
-
-            const_vectorIterator(pointer ptr): _ptr(ptr)
-            {
-
-            }
-
-            const_vectorIterator<T>& operator++()
-            {
-                _ptr++;
-                return *this;
-            }
-
-            const_vectorIterator<T> operator++(int)
-            {
-                const_vectorIterator iterator = *this;
-                ++(*this);
-                return iterator;
-            }
-
-            const_vectorIterator<T>& operator--()
-            {
-                _ptr--;
-                return *this;
-            }
-
-            const_vectorIterator<T> operator--(int)
-            {
-                const_vectorIterator iterator = *this;
-                --(*this);
-                return iterator;
-            }
-
-            reference operator[](int index)
-            {
-                return *(_ptr + index);
-            }
-
-            reference operator*() const { return *_ptr; }
-
-  		      pointer operator->() const { return _ptr; }
-
-            const_vectorIterator operator +(difference_type other) { return const_vectorIterator(_ptr + other); }
-			      const_vectorIterator operator -(difference_type other) { return const_vectorIterator(_ptr - other); }
-			      difference_type operator +(const_vectorIterator other) { return _ptr + other._ptr; }
-			      difference_type operator -(const_vectorIterator other) { return _ptr - other._ptr; }
-
-
-
-            bool operator==(const const_vectorIterator &rhs) {
-              return _ptr == rhs._ptr;
-            }
-            
-            bool operator!=(const const_vectorIterator &rhs) {
-              return !(_ptr == rhs._ptr);
-            }
-            
-            bool operator<(const const_vectorIterator &rhs) {
-              return _ptr < rhs._ptr;
-            }
-            
-            bool operator>(const const_vectorIterator &rhs) {
-              return rhs._ptr < _ptr;
-            }
-            
-            bool operator<=(const const_vectorIterator &rhs) {
-              return !(_ptr > rhs._ptr);
-            }
-            
-            bool operator>=(const const_vectorIterator &rhs) {
-              return !(_ptr < rhs._ptr);
-            } 
-        };
 }
 
 #endif

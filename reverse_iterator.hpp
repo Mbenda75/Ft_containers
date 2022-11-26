@@ -75,8 +75,16 @@ template < class Ite >
 			pointer operator->() const { return _ptr; }
 
 			reference operator[](difference_type n) const { return *(_ptr + n); }
+
+
+			difference_type _comp(const reverseIterator rhs) const
+			{
+				return (rhs.base() - this->_ptr);
+			}
+
 	}; 
     
+	
         template <class Iterator, class Iter>
 	    bool operator==(const reverseIterator<Iterator> &ite1, const reverseIterator<Iter> &ite2)
 	    {
@@ -178,6 +186,11 @@ template < class Ite >
                 const_reverseIterator tmp = *this;
 				_ptr++;
 				return (tmp);
+			}
+
+			difference_type _comp(const const_reverseIterator rhs) const
+			{
+				return (rhs.base() - this->_iter);
 			}
 
 			const_reverseIterator operator +(difference_type v) const{ return const_reverseIterator(_ptr - v); }

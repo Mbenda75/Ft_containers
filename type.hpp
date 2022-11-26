@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   type.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: snarain <snarain@student.42.fr>            +#+  +:+       +#+        */
+/*   By: benmoham <benmoham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/30 17:31:33 by snarain           #+#    #+#             */
-/*   Updated: 2022/09/28 18:33:28 by snarain          ###   ########.fr       */
+/*   Updated: 2022/11/25 18:57:54 by benmoham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <uchar.h>
 
 namespace ft {
+	
 template <typename T>
 struct is_integral {
 	const static bool value = false;
