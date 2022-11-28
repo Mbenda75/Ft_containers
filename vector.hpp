@@ -237,6 +237,7 @@ class vector
 				_allocator.construct(new_data + i, _data[i]);  
 				_allocator.destroy(_data + i); 
 				}
+
 				_allocator.deallocate(_data, _capacity);
 				_capacity = new_cap;
 				_data = new_data;
@@ -335,8 +336,23 @@ class vector
    			}  
 			_size += nb;
 		}
+
+
+		void swap (vector& other) 
+		{
+			std::swap(_data, other._data);
+			std::swap(_size, other._size);
+			std::swap(_capacity, other._capacity);
+			std::swap(_allocator, other._allocator);
+		}
 };
 	/*---------------------------NON MEMBER CLASS--------------------------------------------*/
+
+		template <class T, class Alloc>
+  		void swap (vector<T,Alloc>& lhs, vector<T,Alloc>& rhs){
+			lhs.swap(rhs);
+		}
+
 
 		template <class T, class Alloc>
 		bool operator==	(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexicographical_compare.hpp                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: snarain <snarain@student.42.fr>            +#+  +:+       +#+        */
+/*   By: benmoham <benmoham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/30 17:23:08 by snarain           #+#    #+#             */
-/*   Updated: 2022/06/30 17:23:54 by snarain          ###   ########.fr       */
+/*   Updated: 2022/11/28 15:29:04 by benmoham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,5 @@ bool lexicographical_compare(InputIt1 first1, InputIt1 last1, \
     }
     return (first1 == last1) && (first2 != last2);
 }
-}  // namespace ft
-
+}  
 #endif 
