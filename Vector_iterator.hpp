@@ -104,7 +104,7 @@ namespace ft
               return _ptr == rhs._ptr;
             }
             
-            bool operator!=(          const vectorIterator &rhs) {
+            bool operator!=(const vectorIterator &rhs) {
               return !(_ptr == rhs._ptr);
             }
             

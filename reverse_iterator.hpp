@@ -6,6 +6,7 @@
 
 /*	https://en.cppreference.com/w/cpp/iterator/reverse_iterator 
 	https://learn.microsoft.com/fr-fr/cpp/standard-library/reverse-iterator-class?view=msvc-170#op_at 
+	https://www.youtube.com/watch?v=V89gtNl4pZM
 */
 namespace ft {
 

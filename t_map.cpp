@@ -8,7 +8,7 @@ using namespace std;
 int main()
 {
     std::map<string,unsigned int> nbJoursMois;
-    nbJoursMois["janvier"] = 31;
+    nbJoursMois[1] zzzzzzzzzzzzzzz= 31;
     nbJoursMois["février"] = 28;
     nbJoursMois["mars"] = 31;
     nbJoursMois["avril"] = 30;
@@ -24,15 +24,15 @@ int main()
 
      std::cout << "Nombre de jours du mois de janvier : " << nbJoursMois.find("janvier")->second << std::endl;
     // affichage du mois de janvier
+    std::map<string,unsigned int>::iterator it=nbJoursMois.begin();
+     std::cout << "Janvier : \n" ;
 
-    std::cout << "Janvier : \n" ;
-
-    for (int i=1; i <= nbJoursMois["février"]; i++)
+    for (int i=1; i <= it->second; i++)
     {
         std::cout << setw(3) << i;
         if(i%7 == 0)
             std::cout << endl;
-    }
+    } 
  
     std::cout << endl;
     return 0;

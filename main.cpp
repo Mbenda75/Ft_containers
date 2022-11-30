@@ -22,7 +22,8 @@ int main()
    {
      std::cout << *it << std::endl;  
    }  
-   std::cout << "INSERT NOW \n";
+   std::cout << "INSERT NOW \n"; 
+   vec.insert(vec.begin(), 0 , 55);
 
      vec.reserve(15);
       std::cout << " last size == " << vec.size() << std::endl;

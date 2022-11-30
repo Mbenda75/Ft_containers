@@ -284,6 +284,8 @@ class vector
 		void insert(iterator pos, size_type count, const T& val )
 		{
 			size_type index = pos - this->begin();
+			if (count == 0 )
+				return ;
 			if (_size + count > _capacity){
 				size_t new_cap = 0;
 				if (_capacity == 0)
@@ -297,10 +299,9 @@ class vector
 			for (size_type i = _size; i > index; i--) {
 				_allocator.construct(_data + i + count - 1, *(_data + i - 1));// copy last data for insert new elem
 				_allocator.destroy(_data + i - 1);
-			}
-			for (size_type i = 0; i < count; i++) {
+			 }
+			for (size_type i = 0; i < count; i++) 
 				_allocator.construct(_data + index + i, val); // insert new elem at pos 
-			} 
 			_size = _size + count; 
 		}
 
