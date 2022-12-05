@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   lexicographical_compare.hpp                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: benmoham <benmoham@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/30 17:23:08 by snarain           #+#    #+#             */
-/*   Updated: 2022/11/28 15:29:04 by benmoham         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef LEXICOGRAPHICAL_COMPARE_HPP
 #define LEXICOGRAPHICAL_COMPARE_HPP
 
