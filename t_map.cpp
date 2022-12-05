@@ -8,10 +8,10 @@ using namespace std;
 int main()
 {
     std::map<string,unsigned int> nbJoursMois;
-    nbJoursMois[1] zzzzzzzzzzzzzzz= 31;
-    nbJoursMois["février"] = 28;
-    nbJoursMois["mars"] = 31;
-    nbJoursMois["avril"] = 30;
+    nbJoursMois["zdernier"] = 31;
+    nbJoursMois["a1er"] = 28;
+    nbJoursMois["b2eme"] = 31;
+    nbJoursMois["c3eme"] = 30;
     //...
 
     std::cout << "La std::map contient " << nbJoursMois.size() << " elements : \n";

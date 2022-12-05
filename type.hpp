@@ -6,15 +6,19 @@
 /*   By: benmoham <benmoham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/30 17:31:33 by snarain           #+#    #+#             */
-/*   Updated: 2022/11/25 18:57:54 by benmoham         ###   ########.fr       */
+/*   Updated: 2022/12/02 14:29:06 by benmoham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TYPE_HPP
 #define TYPE_HPP
 
+#include <stdio.h>
 #include <uchar.h>
 
+
+/*	https://learn.microsoft.com/fr-fr/cpp/standard-library/enable-if-class?view=msvc-170 
+	https://en.cppreference.com/w/cpp/types/enable_if */
 namespace ft {
 	
 template <typename T>

@@ -10,13 +10,9 @@
 # include "Iterator_traits.hpp"
 # include "reverse_iterator.hpp"
 
-
-#endif
-
-
 namespace ft{
 
-    template < class Key, class T, 
+template < class Key, class T, 
 	class Compare = std::less<Key>, 
 	class Alloc = std::allocator<ft::pair<const Key,T> > >
 class map {
@@ -36,12 +32,12 @@ class map {
         typedef typename	allocator_type::pointer					pointer;
 		typedef	typename	allocator_type::const_pointer			const_pointer;
 
-        typedef ft::vectorIterator<value_type> iterator;
+ /*        typedef ft::vectorIterator<value_type> iterator;
 		typedef ft::vectorIterator<const value_type> const_iterator;
 
         typedef	ft::reverse_iterator<iterator>			reverse_iterator;
 		typedef	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
-
+ */
 	/*---------------------------MEMBER FUNCTIONS MAP -----------------------------------------------------*/
 
 		map();
@@ -69,7 +65,6 @@ class map {
 
 
 		iterator end();
-
 
 		const_iterator end() const;
 		
@@ -161,3 +156,5 @@ class map {
 		bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs,
 		                 const ft::map<Key,T,Compare,Alloc>& rhs )
 }
+
+#endif

@@ -67,7 +67,7 @@ class vector
 		}
 
 		//fill (2)	
-		explicit vector( size_type n, const T& value = T(), const Allocator& alloc = Allocator() ): 
+		explicit vector( size_type n, const T& value = T(), const Allocator& alloc = Allocator()): 
 		_data(NULL), _size(n), _capacity(n), _allocator(alloc){
 			_data = _allocator.allocate(n);
 			for (size_type i = 0; i < n; i++) {
