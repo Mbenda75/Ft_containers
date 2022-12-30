@@ -4,7 +4,7 @@ SRCS         = main.cpp
 OBJS         =     ${SRCS:.cpp=.o}
 
 CC             =     c++
-CFLAGS        =     -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g3
+CFLAGS        =     -Wall -Wextra -Werror -std=c++98 #-fsanitize=address -g3
 RM            =     rm -f
 NAME        =     vector
 
@@ -16,7 +16,7 @@ all:             ${NAME}
 $(NAME):         $(OBJS)
 				${CC} $(CFLAGS) $(OBJS) -o $(NAME)
 
-$(OBJS):     vector.hpp Vector_iterator.hpp Iterator_traits.hpp reverse_iterator.hpp
+$(OBJS):     vector.hpp Vector_iterator.hpp Iterator_traits.hpp reverse_iterator.hpp 
 
 clean:
 				${RM} ${OBJS}

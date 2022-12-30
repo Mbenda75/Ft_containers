@@ -95,7 +95,7 @@ namespace ft
   		      pointer operator->() const { return _ptr; }
 
             vectorIterator operator +(difference_type other) { return vectorIterator(_ptr + other); }
-			      vectorIterator operator -(difference_type other) { return vectorIterator(_ptr - other); }
+			      vectorIterator operator -(difference_type other) { return vectorIterator(_ptr - other); } 
 			      difference_type operator +(vectorIterator other) { return _ptr + other._ptr; }
 			      difference_type operator -(vectorIterator other) { return _ptr - other._ptr; }
 

@@ -8,9 +8,9 @@
 #include "lexicographical_compare.hpp"
 #include "type.hpp"
 
-# include "Vector_iterator.hpp"
-# include "Iterator_traits.hpp"
-# include "reverse_iterator.hpp"
+# include "./iterator/Vector_iterator.hpp"
+# include "./iterator/Iterator_traits.hpp"
+# include "./iterator/reverse_iterator.hpp"
 
 /*	https://gcc.gnu.org/onlinedocs/gcc-4.6.3/libstdc++/api/a01069_source.html#l00908 
 	https://en.cppreference.com/w/cpp/container/vector 
@@ -36,7 +36,7 @@ class vector
 		/*----------------------POINTER & REFERENCE -------------------------------------*/
 
 		typedef typename allocator_type::pointer    pointer;
-		typedef	typename allocator_type::const_pointer const_pointer;
+		typedef	typename allocator_type::const_pointer const_pointer; 
 
 		typedef typename allocator_type::reference reference;
   		typedef typename allocator_type::const_reference const_reference;
@@ -48,7 +48,7 @@ class vector
 
 
 		typedef ft::reverseIterator<iterator> reverse_iterator;
-		typedef ft::const_reverseIterator<const_iterator> const_reverse_iterator;
+		typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
 
 	private:
 			value_type		*_data;
@@ -69,9 +69,9 @@ class vector
 		//fill (2)	
 		explicit vector( size_type n, const T& value = T(), const Allocator& alloc = Allocator()): 
 		_data(NULL), _size(n), _capacity(n), _allocator(alloc){
-			_data = _allocator.allocate(n);
+			_data = _allocator.allocate(n);	// allocate memory
 			for (size_type i = 0; i < n; i++) {
-				_allocator.construct(_data + i, value);
+				_allocator.construct(_data + i, value);	// construct object
 			}
 		}
 
@@ -81,13 +81,13 @@ class vector
 		typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL): 
 		_data(NULL), _size(0), _capacity(0), _allocator(alloc){
 				size_type	n_cap = 0;
-			for (InputIt tmp = first; tmp != last; tmp++) {
-				n_cap++;
+			for (InputIt tmp = first; tmp != last; tmp++) {	// count size
+				n_cap++;	
 			}
 			_capacity = n_cap;
-			_data = _allocator.allocate(_capacity);
-			for (; first != last; first++)
-				push_back(*first);
+			_data = _allocator.allocate(_capacity);	// allocate memory 
+			for (; first != last; first++)	
+				push_back(*first);		
 		}
 
 		//copy (4)	
@@ -211,56 +211,56 @@ class vector
 		void pop_back () {
 			if (!_size)
 				return ;
-			_allocator.destroy(_data + _size - 1);
-			_size--;
+			_allocator.destroy(_data + _size - 1); //destroy last elem
+			_size--;	
 		}
 
-		void push_back( const T & val ){
-			if (_capacity == 0)
-				reserve(1); 
-			if (_size + 1 > _capacity)
-				reserve(_capacity * 2); 
-			_allocator.construct(_data + _size++, val);
-		}
+		void push_back( const T & val ){	
+			if (_capacity == 0)	//if capacity is 0
+				reserve(1); 		//if capacity is 0, reserve 1
+			if (_size + 1 > _capacity)	//if size is bigger than capacity
+				reserve(_capacity * 2); 		//if size is bigger than capacity, double capacity
+			_allocator.construct(_data + _size++, val);	//construct new data
+		}	
 
 		void reserve(size_type new_cap) 
 		{
 			if (new_cap > max_size())
 				throw(std::length_error("vector::reserve"));
 
-			if (new_cap != 0 && new_cap > _capacity)
+			if (new_cap != 0 && new_cap > _capacity) //if new cap is bigger than old cap
 			{
 				value_type *new_data = _allocator.allocate(new_cap); //alloc new cap
 
-				for (size_type i = 0; i < _size; i++)
+				for (size_type i = 0; i < _size; i++)	//copy old data to new data
 				{
-				_allocator.construct(new_data + i, _data[i]);  
+				_allocator.construct(new_data + i, _data[i]);  		//copy old data to new data
 				_allocator.destroy(_data + i); 
 				}
 
-				_allocator.deallocate(_data, _capacity);
-				_capacity = new_cap;
-				_data = new_data;
+				_allocator.deallocate(_data, _capacity);	//free old data
+				_capacity = new_cap;	//set new cap
+				_data = new_data;	//set new data
 			}
 		}
 
 		iterator erase (iterator pos) {
-				vector	tmp(pos + 1, end());
+				vector	tmp(pos + 1, end());	//copy data after pos
 				
-				for (size_t i = 0; i <= tmp.size(); i++)
+				for (size_t i = 0; i <= tmp.size(); i++) //erase all data
 					pop_back(); //erase all 
-				for (iterator it = tmp.begin(); it != tmp.end(); it++)
+				for (iterator it = tmp.begin(); it != tmp.end(); it++)	//copy new data
 					push_back(*it); // copy new data since tmp
 				return (pos);
 			}
 
 
 		iterator erase (iterator first, iterator last) {
-				iterator tmp(first);
+				iterator tmp(first);	//copy first
 
-				while (tmp++ != last)
-					erase(first);
-				return (first);
+				while (tmp++ != last)	//erase all data
+					erase(first);	//erase all data
+				return (first);	
 			}     
 
 		void clear(){
@@ -273,36 +273,37 @@ class vector
 			}
 		}
 	
+
 		iterator insert(iterator pos, const value_type &val)
 		{
-			difference_type i = pos - begin();
-			insert(pos, 1, val);
-			return begin() + i;
+			difference_type i = pos - begin();	//get index of pos
+			insert(pos, 1, val);	//insert 1 elem
+			return begin() + i;	//return iterator of pos
 
 		}
 	
 		void insert(iterator pos, size_type count, const T& val )
 		{
-			size_type index = pos - this->begin();
+			size_type index = pos - this->begin();	//get index of pos
 			if (count == 0 )
 				return ;
-			if (_size + count > _capacity){
+			if (_size + count > _capacity){	//if size + count is bigger than capacity
 				size_t new_cap = 0;
-				if (_capacity == 0)
+				if (_capacity == 0)	
 					new_cap = 1;
 				else
-					new_cap = _size * 2;
+					new_cap = _size * 2;	
 				if (new_cap < _size + count)
 					new_cap = _size + count;
-				reserve(new_cap);
+				reserve(new_cap);	//reserve new cap
 			}
 			for (size_type i = _size; i > index; i--) {
 				_allocator.construct(_data + i + count - 1, *(_data + i - 1));// copy last data for insert new elem
-				_allocator.destroy(_data + i - 1);
+				_allocator.destroy(_data + i - 1);	//destroy last elem
 			 }
 			for (size_type i = 0; i < count; i++) 
 				_allocator.construct(_data + index + i, val); // insert new elem at pos 
-			_size = _size + count; 
+			_size = _size + count; 	
 		}
 
 
@@ -356,7 +357,7 @@ class vector
 
 
 		template <class T, class Alloc>
-		bool operator==	(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+		bool operator==	(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {	
 			if (lhs.size() != rhs.size())
 				return false;
 			return ft::equal(lhs.begin(), lhs.end(), rhs.begin());

@@ -23,9 +23,9 @@ namespace ft{
 			container_type _data;
 
 		public:
-			stack (const container_type &ct = container_type()) : _data(ct) {}
+			stack (const container_type &ct = container_type()) : _data(ct) {}	
 
-			stack(const stack &rhs): _data(rhs._data){}
+			stack(const stack &rhs): _data(rhs._data){}	
 			
 			~stack() {}
 			
