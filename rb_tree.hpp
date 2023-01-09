@@ -1,410 +1,431 @@
-# ifndef RB_TREE_HPP
+
+#ifndef RB_TREE_HPP
 # define RB_TREE_HPP
 
+#include <memory>
+#include "rb_node.hpp"
+#include "rb_iterator.hpp"
 
-/*  -Every node is either red or black.
-    -All NIL nodes (figure 1) are considered black.
-    -A red node does not have a red child.
-    -Every path from a given node to any of its descendant NIL nodes goes through the same number of black nodes
-    https://www.programiz.com/dsa/red-black-tree
-    https://www.youtube.com/watch?v=h1Z8_ebEqao&t=1272s
-    https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
+
+/*
+	The binary tree is Red Black tree !
+	SOURCES :
+		- https://www.youtube.com/watch?v=h1Z8_ebEqao&t=1272s (main source)
+		- https://www.cs.usfca.edu/~galles/visualization/RedBlack.html (visualizer)
+		- https://www.happycoders.eu/algorithms/red-black-tree-java/ (rb tree in java)
+		- https://www.programiz.com/dsa/red-black-tree
+	
+	The rule of rb tree:
+		- Each node is either red or black.
+		- (The root is black.)
+		- All NIL leaves are black.
+		- A red node must not have red children.
+		- All paths from a node to the leaves below contain the same number of black nodes.
+
+	Other rules of the rb tree with a pair
+		- You can't have the same key in the tree but you can have a same key value !
+		If the rule are not respected:
+			- If the Uncle of the new node is red. We need to do a color flip
+			- If the Uncle of the new node is black. We need to do a rotate 
+	The _end variable is because the an iterator can't be NULL
 */
-namespace ft{
 
-enum Rb_color { red = false, black = true };
-
-template <class T>
-struct nodeRB
+namespace ft
 {
-  typedef T value_type;
-  typedef nodeRB* ptr;
-  typedef const nodeRB* const_ptr;
-  
+	template <class Key, class T, class KeyOfValue, class Compare, class Alloc>
+	class rbTree
+	{
+	public:
 
-  value_type value; 
-  Rb_color  color;
-  ptr       parent;
-  ptr       left;
-  ptr       right;
+		typedef T			value_type;	// value_type is the type of the value
+		typedef Key			key_type;	// key_type is the type of the key
+		typedef Compare		key_compare;	// key_compare is the comparison function for the key
+		typedef Alloc 		allocator_type;	// allocator_type is the allocator for the node
 
+		typedef Node<value_type>	node_type;	// node_type is the node
+		typedef Node<value_type>*	node_ptr;	// node_ptr is the pointer to the node
+		typedef typename allocator_type::template rebind<Node<T> >::other pair_alloc_type;	// pair_alloc_type is the allocator for the node
+
+		typedef std::size_t size_type;
+
+		rbTree(const key_compare &comp = key_compare(), const pair_alloc_type &alloc = pair_alloc_type()): _comp(comp), _alloc(alloc), _size(0)
+		{
+			_end = _alloc.allocate(1);
+			_alloc.construct(_end, node_type(value_type(), NULL, NULL, NULL, black));
+			_root = _end;
+		}
+
+		 ~rbTree()
+		{
+			clear_h(_root);
+			_alloc.destroy(_end);
+			_alloc.deallocate(_end, 1);
+		}
+	private:
+		node_ptr 		_root;	// root of the tree
+		node_ptr		_end;	// end of the tree
+		key_compare 	_comp;	// comparison function for the key
+		pair_alloc_type	_alloc;	// allocator for the node
+		size_type 		_size;	// size of the tree
+	public:
+		node_ptr getRoot() const
+		{
+			return (this->_root);
+		}
+
+		node_ptr getEnd() const
+		{
+			return (this->_end);
+		}
+
+		size_type getSize() const
+		{
+			return (this->_size);
+		}
+
+		size_type max_size() const
+		{
+			return (_alloc.max_size());
+		}
+
+		// find the node with the minimum key
+		node_ptr mini() const
+		{
+			node_ptr node = _root;
+			if (node == _end)
+				return _root;
+			while (node->left != _end)
+				node = node->left;
+			return node;
+		}
+
+		// find the node with the minimum key
+		node_ptr mini(node_ptr node) const
+		{
+			if (node == _end)
+				return _root;
+			while (node->left != _end)
+				node = node->left;
+			return node;
+		}
+
+		void left_rotate(node_ptr x)
+		{
+			node_ptr y = x->right; // y saves x's right branch
+
+			x->right = y->left; // x's new right child is y's old left child
+			if (y->left != _end)
+				y->left->parent = x;
+			y->parent = x->parent; // y is new x so it takes old x's parent
+			if (x->parent == NULL)
+				this->_root = y;
+			else if (x == x->parent->left) // if x was it's parent's left child, y becomes it's new parent's left child
+				x->parent->left = y;
+			else
+				x->parent->right = y; // mirror case
+			y->left = x;
+			x->parent = y;
+		}
+
+		void right_rotate(node_ptr x) // mirror case
+		{
+			node_ptr y = x->left;
+
+			x->left = y->right;
+			if (y->right != _end)
+				y->right->parent = x;
+			y->parent = x->parent;
+			if (x->parent == NULL)
+				this->_root = y;
+			else if (x == x->parent->left)
+				x->parent->left = y;
+			else
+				x->parent->right = y;
+			y->right = x;
+			x->parent = y;
+		}
+
+		void fixInsert(node_ptr z)  // fix the color of all node and the balancing of the tree
+		{
+			node_ptr u;
+			while (z->parent->_color == red)
+			{
+				if (z->parent == z->parent->parent->right) // parent is gp's right child
+				{
+					u = z->parent->parent->left; // uncle is left
+					if (u->_color == red) // if uncle also red so color flip
+					{
+						u->_color = black;	// uncle is black now	
+						z->parent->_color = black; // parent is black now 
+						z->parent->parent->_color = red;	// gp is red now 
+						z = z->parent->parent;	// z is gp now and we check it's color again
+					}
+					else // the uncle is black so rotate
+					{
+						if (z == z->parent->left) // z is left child
+						{
+							z = z->parent; // z is save in z's parent !
+							right_rotate(z); // new z is old parent
+						}
+						z->parent->_color = black;	// parent is black now 	
+						z->parent->parent->_color = red; // gp is red now 
+						left_rotate(z->parent->parent);	 // gp is new z and we rotate it to the left 
+					}
+				}
+				else // parent is gp's left child #mirror_case
+				{
+					u = z->parent->parent->right; // uncle
+					if (u->_color == red)	// uncle is red	 #mirror_case	 
+					{
+						u->_color = black;
+						z->parent->_color = black;
+						z->parent->parent->_color = red;
+						z = z->parent->parent;
+					}
+					else
+					{
+						if (z == z->parent->right)
+						{
+							// mirror case
+							z = z->parent; // z is save in z's parent !
+							left_rotate(z);
+						}
+						// mirror case
+						z->parent->_color = black;
+						z->parent->parent->_color = red;
+						right_rotate(z->parent->parent);
+					}
+				}
+				if (z == _root)
+					break;
+			}
+			_root->_color = black; // root is black
+		}
+
+		node_ptr insertNode(const value_type &data)
+		{
+			node_ptr node;
+			node = _alloc.allocate(1);
+			_alloc.construct(node, node_type(data, NULL, _end, _end, red)); // create new node
+
+			node_ptr y = NULL;
+			node_ptr x = this->_root;
+
+			while (x != _end) // find node's natural placement
+			{
+				y = x; // y is parent of x 
+				if (_comp(KeyOfValue()(node->data), KeyOfValue()(x->data))) // if node's key is smaller than x's key
+					x = x->left;
+				else if (_comp(KeyOfValue()(x->data), KeyOfValue()(node->data))) // if node's key is bigger than x's key
+					x = x->right;
+				else
+				{
+					_alloc.destroy(node); // if the key already exist, destroy the node and return end
+					_alloc.deallocate(node, 1); // and return end  iterator
+					return _end;
+				}
+			}
+			node->parent = y; //	place the new node at it's right placement 
+			if (y == NULL) // Root case
+			{
+				_size++; 
+				this->_root = node; // if the tree is empty, the new node is the root	
+				node->_color = black; // root is black
+				return (this->_root); // return the root
+			}
+			else if (_comp(KeyOfValue()(node->data), KeyOfValue()(y->data))) // place the new node at it's right placement
+				y->left = node;// if node's key is smaller than y's key
+			else
+				y->right = node;
+			this->_size++;
+			if (node->parent->parent == NULL) // if the grandparent is null, simply return
+				return (node); 
+			fixInsert(node); 
+			return (node);
+		}
+
+		bool deleteNode(key_type key)
+		{
+			return (_erase(key));
+		}
+
+		// search the tree for the key k and return the corresponding node
+		node_ptr searchTree(key_type k) const
+		{
+			return _search_node(this->_root, k); // call the recursive function to search the tree
+		}
+
+		void clear_h(node_ptr const &node)
+		{
+			clear_all(node);
+			this->_root = _end;
+		}
+
+		void clear_all(node_ptr const &node)
+		{
+			if (node == _end) // break of the recursion
+				return;
+			clear_all(node->left); // left subtree first then right subtree 
+			clear_all(node->right);	 	// then delete the node
+			_alloc.destroy(node);	// destroy the node
+			_alloc.deallocate(node, 1);	// deallocate the node
+			_size--;
+		}
+
+		void swap(rbTree &x)
+		{
+			std::swap(this->_root, x._root);
+			std::swap(this->_end, x._end);
+			std::swap(this->_size, x._size);
+		}
+
+		void rbTransplant(node_ptr u, node_ptr v) // replaces u by v
+		{
+			if (u->parent == NULL)
+				_root = v;
+			else if (u == u->parent->left)
+				u->parent->left = v;
+			else
+				u->parent->right = v;
+			v->parent = u->parent;
+		}
+
+		// fix the rb tree modified by the delete operation
+		void fixDelete(node_ptr x)
+		{
+			node_ptr w;
+
+			while (x != this->_root && x->_color == black)
+			{
+				if (x == x->parent->left) // if x is the left child
+				{
+					w = x->parent->right; // w is x's right brother
+					if (w->_color == red)
+					{
+						w->_color = black; // case 1 : w is red -> change color and rotate around x's parent to get a black brother (case 2, 3 or 4)
+						x->parent->_color = red;	// x's parent is now red because of the rotation (case 1)
+						left_rotate(x->parent); // new parent is w, old parent p became w's left child, p is still x's parent and x->parent->right bacame old w->left
+						w = x->parent->right;	// w is now x's new right brother (case 2, 3 or 4)
+					}
+
+					if (w->left->_color == black && w->right->_color == black) 
+					{
+						w->_color = red; // case 2 : w is black and both of his children are black -> change color of w to red and go up the tree
+						x = x->parent; // x's parent is now black because of the rotation (case 1) and x is now black because of the color change (case 2)
+					}
+					else // at least one child is red
+					{
+						if (w->right->_color == black) // left child is red
+						{
+							w->left->_color = black; // case 3 : w is black, left child is red and right child is black -> change color of left child to black and rotate around w to get a red right child (case 4)
+							w->_color = red; // w is now red because of the rotation (case 3)
+							right_rotate(w); // new parent is w->left, old parent w became w->left->right, w is still x's parent and x->parent->right bacame old w->left->right
+							w = x->parent->right; // w is now x's new right brother (case 4)
+						}
+						w->_color = x->parent->_color; 		// case 4 : w is black and right child is red -> change color of w to x's parent color and color of x's parent to black and color of w's right child to black
+						x->parent->_color = black;		// x's parent is now black because of the rotation (case 3) and x is now black because of the color change (case 4)
+						w->right->_color = black;	// w's right child is now black because of the color change (case 4)
+						left_rotate(x->parent);	// new parent is w, old parent p became w's left child, p is still x's parent and x->parent->right bacame old w->left
+						x = _root;	// x is now the root of the tree and is black because of the color change (case 4)
+					}
+				}
+				else // mirror case
+				{
+					w = x->parent->left;
+					if (w->_color == red)
+					{
+						w->_color = black;
+						x->parent->_color = red;
+						right_rotate(x->parent);
+						w = x->parent->left;
+					}
+
+					if (w->left->_color == black && w->right->_color == black)
+					{
+						w->_color = red;
+						x = x->parent;
+					}
+					else
+					{
+						if (w->left->_color == black)
+						{
+							w->right->_color = black;
+							w->_color = red;
+							left_rotate(w);
+							w = x->parent->left;
+						}
+						w->_color = x->parent->_color;
+						x->parent->_color = black;
+						w->left->_color = black;
+						right_rotate(x->parent);
+						x = _root;
+					}
+				}
+			}
+			x->_color = black; // root is black no matter what
+		}
+
+		bool _erase(key_type key)
+		{
+			node_ptr z, x, y;
+
+			z = searchTree(key);
+			if (z == _end)
+				return false;
+
+			y = z; // y saves the suppressed node's placement
+			rbColor y_og_color = y->_color;
+			if (z->left == _end) // z only had 1 child whitch is the right one so so it get's replaced by it's child
+			{
+				x = z->right; // x saves the right child's branch
+				rbTransplant(z, z->right);
+			}
+			else if (z->right == _end) //mirror case
+			{
+				x = z->left;
+				rbTransplant(z, z->left);
+			}
+			else // suppressed node had 2 children and is replaced by the minimum of it's right branch
+			{
+				y = mini(z->right); // search for the minimum in the right child's branch
+				y_og_color = y->_color;
+				x = y->right; // x saves the minimum's right branch
+				if (y->parent == z) // the minimum is z->right
+					x->parent = y;
+				else
+				{
+					rbTransplant(y, y->right); // replaces the minimum by it's right branch
+					y->right = z->right; // set the new z's right side
+					y->right->parent = y;
+				}
+				rbTransplant(z, y); // replace z by the correct value whitch is y and maintain the tree as a good search tree
+				y->left = z->left;
+				y->left->parent = y;
+				y->_color = z->_color;
+			}
+			_alloc.destroy(z);
+			_alloc.deallocate(z, 1);
+			_size--;
+			if (y_og_color == black) // fix the lost black color on x
+				fixDelete(x);
+			return true;
+		}
+
+		node_ptr _search_node(node_ptr node, key_type key) const
+		{
+			if (node == _end)
+				return _end;
+			if (key == KeyOfValue()(node->data))
+				return node;
+			if (node != _end)
+			{
+				if (_comp(key, KeyOfValue()(node->data))) // if key < node->data  go left
+					return _search_node(node->left, key);
+				return _search_node(node->right, key);
+			}
+			return _end;
+		}
+	};
 };
-
-template<class Key, class Val, class KeyOfValue, class Compare, class Alloc> 
-class rbTree
-{
-    public :
-
-      typedef Val			value_type;
-		  typedef Key			key_type;
-		  typedef Compare		key_compare;
-		  typedef Alloc 		allocator_type;
-      typedef std::size_t size_type;
-  
-		  typedef nodeRB<value_type>	node_type;
-		  typedef nodeRB<value_type>*	node_ptr;
-      
-    private :
-
-      node_ptr root;
-      node_ptr nil;
-      size_type size;
-      key_compare comp;
-      allocator_type alloc;
-
-
-    public :
-
-      rbTree() : root(nullptr), nil(nullptr), size(0), comp(), alloc() {}
-
-      void deleteFix(rbTree x) {
-      rbTree s;  //sibling
-      while (x != root && x->color == 0) {    //while x is not root and x is black
-         if (x == x->parent->left) { //if x is a left child
-           s = x->parent->right; //sibling is right child
-           if (s->color == 1) {  //if sibling is red
-             s->color = 0;    //sibling becomes black
-             x->parent->color = 1; //parent becomes red
-             leftRotate(x->parent);   //left rotate at parent
-             s = x->parent->right; //sibling becomes right child
-           }
-
-        if (s->left->color == 0 && s->right->color == 0) {  //if both children of sibling are black
-          s->color = 1; //sibling becomes red
-          x = x->parent;  //x becomes parent
-        } else {
-          if (s->right->color == 0) { //if right child of sibling is black
-            s->left->color = 0; //left child of sibling becomes black
-            s->color = 1; //sibling becomes red
-            rightRotate(s); //right rotate at sibling
-            s = x->parent->right; //sibling becomes right child
-          }
-
-          s->color = x->parent->color;  //sibling becomes same color as parent
-          x->parent->color = 0; //parent becomes black
-          s->right->color = 0;  //right child of sibling becomes black
-          leftRotate(x->parent);  //left rotate at parent
-          x = root;
-        }
-      } else {
-        s = x->parent->left;  //sibling is left child
-        if (s->color == 1) {  //if sibling is red
-          s->color = 0;   //sibling becomes black
-          x->parent->color = 1; //parent becomes red
-          rightRotate(x->parent); //right rotate at parent
-          s = x->parent->left;  //sibling becomes left child
-        }
-
-        if (s->right->color == 0 && s->right->color == 0) { //if both children of sibling are black
-          s->color = 1; //sibling becomes red
-          x = x->parent;  //x becomes parent
-        } else {  //if one child of sibling is red
-          if (s->left->color == 0) {  //if left child of sibling is black
-            s->right->color = 0;  //right child of sibling becomes black
-            s->color = 1; //sibling becomes red
-            leftRotate(s);  //left rotate at sibling
-            s = x->parent->left;  //sibling becomes left child
-          }
-
-          s->color = x->parent->color;  //sibling becomes same color as parent
-          x->parent->color = 0; //parent becomes black
-          s->left->color = 0; //left child of sibling becomes black
-          rightRotate(x->parent); //right rotate at parent
-          x = root; //x becomes root
-        }
-      }
-    }
-    x->color = 0; //x becomes black
-  } 
-
-      void rbTransplant(rbTree u, rbTree v) { //replaces one subtree as a child of its parent with another subtree
-        if (u->parent == nullptr) { //if u is the root
-          root = v; //v becomes the root
-        } else if (u == u->parent->left) { //if u is a left child
-          u->parent->left = v; //v becomes the left child
-        } else {
-          u->parent->right = v; //v becomes the right child
-        }
-        v->parent = u->parent; //the parent of v becomes the parent of u
-      }
-
-      void deleteNodeHelper(rbTree node, int key) {
-        rbTree z = nil; //node to be deleted
-        rbTree x, y;
-        while (node != nil) { //searching for the node to be deleted
-          if (node->data == key) { //if found
-            z = node; // node to be deleted
-          }
-
-          if (node->data <= key) {//if the key is greater than the current node, go to the right child
-            node = node->right;//otherwise, go to the left child
-          } else {
-            node = node->left;//otherwise, go to the left child
-          }
-        }
-
-        if (z == nil) { //if the node to be deleted is not found
-          cout << "Key not found in the tree" << endl; 
-          return;
-        }
-
-        y = z; //y is the node to be deleted
-        int y_original_color = y->color; //store the original color of the node to be deleted
-        if (z->left == nil) {
-          x = z->right; //if the left child of the node to be deleted is null, replace it with the right child
-          rbTransplant(z, z->right); //replace the node to be deleted with the right child
-        } else if (z->right == nil) { //if the right child of the node to be deleted is null, replace it with the left child
-          x = z->left;//if the left child of the node to be deleted is null, replace it with the right child
-          rbTransplant(z, z->left); //replace the node to be deleted with the left child
-        } else {
-          y = minimum(z->right); //find the minimum node in the right subtree of the node to be deleted
-          y_original_color = y->color; //store the original color of the minimum node
-          x = y->right; //x is the right child of the minimum node
-          if (y->parent == z) { //if the parent of the minimum node is the node to be deleted
-            x->parent = y; //the parent of x becomes y
-          } else {
-            rbTransplant(y, y->right);  //replace the minimum node with its right child
-            y->right = z->right; //the right child of y becomes the right child of the node to be deleted
-            y->right->parent = y; // the parent of the right child of y becomes y
-          }
-          rbTransplant(z, y); //replace the node to be deleted with the minimum node
-          y->left = z->left; //the left child of y becomes the left child of the node to be deleted
-          y->left->parent = y; // the parent of the left child of y becomes y
-          y->color = z->color;  //the color of y becomes the color of the node to be deleted
-        }
-        delete z;
-        if (y_original_color == 0) {    //if the original color of the minimum node is black
-          deleteFix(x);            //balance the tree
-        }
-      }
-
-      // For balancing the tree after insertion
-      void insertFix(rbTree k) {
-        rbTree u;  //uncle
-        while (k->parent->color == 1) {   //while the parent of k is red
-          if (k->parent == k->parent->parent->right) {  //if the parent of k is the right child of its parent
-            u = k->parent->parent->left;  //u is the left child of the grandparent of k
-            if (u->color == 1) {  //if u is red
-              u->color = 0; //u becomes black
-              k->parent->color = 0; //the parent of k becomes black
-              k->parent->parent->color = 1; //the grandparent of k becomes red
-              k = k->parent->parent;  //k becomes the grandparent of k
-            } else {  //if u is black
-              if (k == k->parent->left) { //if k is the left child of its parent
-                k = k->parent;  //k becomes its parent
-                rightRotate(k); //right rotate at k
-              }
-              k->parent->color = 0; //the parent of k becomes black
-              k->parent->parent->color = 1;  //the grandparent of k becomes red
-              leftRotate(k->parent->parent);   //left rotate at the grandparent of k
-            }
-          } else {
-            u = k->parent->parent->right; //u is the right child of the grandparent of k
-
-            if (u->color == 1) {  //if u is red
-              u->color = 0; //u becomes black
-              k->parent->color = 0; //the parent of k becomes black
-              k->parent->parent->color = 1; //the grandparent of k becomes red
-              k = k->parent->parent;  //k becomes the grandparent of k
-            } else { 
-              if (k == k->parent->right) {  //if k is the right child of its parent
-                k = k->parent;  //k becomes its parent
-                leftRotate(k);  //left rotate at k
-              }
-              k->parent->color = 0; //the parent of k becomes black
-              k->parent->parent->color = 1 ;  //the grandparent of k becomes red
-              rightRotate(k->parent->parent);   //right rotate at the grandparent of k
-            }
-          }
-          if (k == root) {  //if k becomes the root
-            break;
-          }
-        }
-        root->color = 0;  //the root becomes black
-      }
-
-      void printHelper(rbTree root, string indent, bool last) {
-        if (root != nil) {
-          cout << indent;
-          if (last) {
-            cout << "R----";
-            indent += "   ";
-          } else {
-            cout << "L----";
-            indent += "|  ";
-          }
-
-          string sColor = root->color ? "RED" : "BLACK";
-          cout << root->data << "(" << sColor << ")" << endl;
-          printHelper(root->left, indent, false);
-          printHelper(root->right, indent, true);
-        }
-      }
-
-      rbTree minimum(rbTree node) {
-        while (node->left != nil) {
-          node = node->left;
-        }
-        return node;
-      }
-
-      rbTree maximum(rbTree node) {
-        while (node->right != nil) {
-          node = node->right;
-        }
-        return node;
-      }
-
-      // Left rotate  at node x
-      void leftRotate(rbTree x) {
-        rbTree y = x->right; //y is the right child of x
-        x->right = y->left;   //the left child of y becomes the right child of x
-        if (y->left != nil) { //if the left child of y is not null
-          y->left->parent = x;  //the parent of the left child of y becomes x
-        }
-        y->parent = x->parent;  //the parent of y becomes the parent of x
-        if (x->parent == nullptr) { //if the parent of x is null
-          this->root = y; //y becomes the root
-        } else if (x == x->parent->left) {  //if x is the left child of its parent
-          x->parent->left = y;  //the left child of the parent of x becomes y
-        } else {
-          x->parent->right = y; //the right child of the parent of x becomes y
-        }
-        y->left = x;    //the left child of y becomes x
-        x->parent = y;    //the parent of x becomes y
-      }
-
-      // Right rotate  at node x 
-      void rightRotate(rbTree x) { 
-        rbTree y = x->left;  //y is the left child of x
-        x->left = y->right;  //the right child of y becomes the left child of x
-        if (y->right != nil) {  //if the right child of y is not null
-          y->right->parent = x; //the parent of the right child of y becomes x
-        }
-        y->parent = x->parent;  //the parent of y becomes the parent of x
-        if (x->parent == nullptr) { //if the parent of x is null
-          this->root = y; //y becomes the root
-        } else if (x == x->parent->right) { //if x is the right child of its parent
-          x->parent->right = y; //the right child of the parent of x becomes y
-        } else {
-          x->parent->left = y;  //the left child of the parent of x becomes y
-        }
-        y->right = x; //the right child of y becomes x
-        x->parent = y;   //the parent of x becomes y
-      }
-
-      // Inserting a node
-      void insert(int key) {  //inserting a node with key value
-        rbTree node = new Node;  //creating a new node
-        node->parent = nullptr; //the parent of the new node is null
-        node->data = key; //the key of the new node is the key value
-        node->left = nil; //the left child of the new node is null
-        node->right = nil;  //the right child of the new node is null
-        node->color = 1;  //the color of the new node is red
-
-        rbTree y = nullptr;  //y is the parent of x
-        rbTree x = this->root; //x is the root
-
-        while (x != nil) {  //while x is not null
-          y = x;  //y becomes x
-          if (node->data < x->data) { //if the key of the new node is less than the key of x
-            x = x->left;  //x becomes the left child of x
-          } else {  //if the key of the new node is greater than the key of x
-            x = x->right; //x becomes the right child of x
-          }
-        }
-
-        node->parent = y; //the parent of the new node becomes y
-        if (y == nullptr) {   //if y is null
-          root = node;  //the new node becomes the root
-        } else if (node->data < y->data) {  //if the key of the new node is less than the key of y
-          y->left = node; //the new node becomes the left child of y
-        } else {    
-          y->right = node;  //the new node becomes the right child of y
-        }
-
-        if (node->parent == nullptr) {  //if the parent of the new node is null
-          node->color = 0;  //the color of the new node becomes black
-          return;
-        }
-
-        if (node->parent->parent == nullptr) {  //if the grandparent of the new node is null
-          return; 
-        } 
-        insertFix(node);  //fixing the tree
-      }
-
-      rbTree getRoot() {
-        return this->root;
-      }
-
-      void deleteNode(int data) {
-        deleteNodeHelper(this->root, data);
-      }
-
-      void printTree() {
-        if (root) {
-          printHelper(this->root, "", true);
-        }
-      }
-
-      rbTree minimum(rbTree node) {
-    while (node->left != nil) { //while the left child of node is not null
-      node = node->left;  //node becomes the left child of node
-    }
-    return node;
-  }
-
-  rbTree maximum(rbTree node) {   
-    while (node->right != nil) {  //while the right child of node is not null
-      node = node->right; //node becomes the right child of node 
-    }
-    return node;
-  }
-
-  rbTree successor(rbTree x) {
-    if (x->right != nil) {    //if the right child of x is not null
-      return minimum(x->right); //return the minimum of the right child of x
-    }
-
-    rbTree y = x->parent; //y is the parent of x
-    while (y != nil && x == y->right) { //while y is not null and x is the right child of y
-      x = y;  //x becomes y
-      y = y->parent;  //y becomes the parent of y
-    }
-    return y;
-  }
-
-  rbTree predecessor(rbTree x) {
-    if (x->left != nil) { //if the left child of x is not null
-      return maximum(x->left);  //return the maximum of the left child of x
-    }
-
-    rbTree y = x->parent; //y is the parent of x
-    while (y != nil && x == y->left) {  //while y is not null and x is the left child of y    
-      x = y;  //x becomes y   
-      y = y->parent;  //y becomes the parent of y
-    }
-    return y;
-
-  }
-  rbTree searchTreeHelper(rbTree node, int key) {
-    if (node == nil || key == node->data) { //if the node is null or the key is equal to the key of the node
-      return node;
-    }
-
-    if (key < node->data) { //if the key is less than the key of the node
-      return searchTreeHelper(node->left, key); //search the left subtree
-    }
-    return searchTreeHelper(node->right, key);  //search the right subtree
-  }
-
-  rbTree searchTree(int k) {
-    return searchTreeHelper(this->root, k); 
-  }
-};    
-}
-
-  
 
 #endif

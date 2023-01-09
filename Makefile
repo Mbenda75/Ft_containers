@@ -6,7 +6,7 @@ OBJS         =     ${SRCS:.cpp=.o}
 CC             =     c++
 CFLAGS        =     -Wall -Wextra -Werror -std=c++98 #-fsanitize=address -g3
 RM            =     rm -f
-NAME        =     vector
+NAME        =     container
 
 all:             ${NAME}
 
@@ -16,8 +16,7 @@ all:             ${NAME}
 $(NAME):         $(OBJS)
 				${CC} $(CFLAGS) $(OBJS) -o $(NAME)
 
-$(OBJS):     vector.hpp Vector_iterator.hpp Iterator_traits.hpp reverse_iterator.hpp 
-
+$(OBJS):     vector.hpp Vector_iterator.hpp Iterator_traits.hpp reverse_iterator.hpp map.hpp r
 clean:
 				${RM} ${OBJS}
 

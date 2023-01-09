@@ -1,16 +1,16 @@
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 
-# include <iostream>
-# include <string>
+# include <iostream>	// std::cout
+# include <string>	// std::string
 
 # include "equal.hpp"
 #include "lexicographical_compare.hpp"
 #include "type.hpp"
 
-# include "./iterator/Vector_iterator.hpp"
-# include "./iterator/Iterator_traits.hpp"
-# include "./iterator/reverse_iterator.hpp"
+# include "Vector_iterator.hpp"
+# include "Iterator_traits.hpp"
+# include "reverse_iterator.hpp"
 
 /*	https://gcc.gnu.org/onlinedocs/gcc-4.6.3/libstdc++/api/a01069_source.html#l00908 
 	https://en.cppreference.com/w/cpp/container/vector 
@@ -25,20 +25,20 @@ class vector
 	public:
 		/*-------------------------MEMBER TYPE--------------------------------------------*/
 		//The first template parameter (T)
-		typedef T value_type;
+		typedef T value_type; 	//value_type is an alias of the first template parameter (T)
 
 		//The second template parameter (Allocator)
-		typedef Allocator allocator_type;
+		typedef Allocator allocator_type; //allocator_type is an alias of the Allocator template parameter (Allocator)
 		
-		typedef std::ptrdiff_t  difference_type;
+		typedef std::ptrdiff_t  difference_type; //difference_type is a signed integer type, identical to: iterator_traits<iterator>::difference_type
 		typedef std::size_t size_type;
 
 		/*----------------------POINTER & REFERENCE -------------------------------------*/
 
-		typedef typename allocator_type::pointer    pointer;
+		typedef typename allocator_type::pointer    pointer; //pointer to value_type allocated with the allocator
 		typedef	typename allocator_type::const_pointer const_pointer; 
 
-		typedef typename allocator_type::reference reference;
+		typedef typename allocator_type::reference reference; //reference to value_type allocated with the allocator
   		typedef typename allocator_type::const_reference const_reference;
 
 		/*------------------------VECTOR ITERATOR ------------------------------------*/
@@ -151,13 +151,13 @@ class vector
 	/*----------------------------------REVERSE ITERATOR FUNCTION-----------------------------------------------*/
 	
 		reverse_iterator rbegin() {
-			return reverse_iterator(_data + _size - 1); } //return the last
+			return reverse_iterator(this->end()); } //return the last
 
-		const_reverse_iterator rbegin() const { return rbegin(); }
+		const_reverse_iterator rbegin() const { return this->rbegin(); }
 
-		reverse_iterator rend() { return reverse_iterator(_data  - 1); }
+		reverse_iterator rend() { return reverse_iterator(this->begin()); }
 		
-		const_reverse_iterator rend() const { return rend(); }
+		const_reverse_iterator rend() const { return this->rend(); }
 
  	/*-----------------------------CAPACITY FUNCTIONS--------------------------------------- */
 		template <class InputIterator>
@@ -354,10 +354,8 @@ class vector
   		void swap (vector<T,Alloc>& lhs, vector<T,Alloc>& rhs){
 			lhs.swap(rhs);
 		}
-
-
 		template <class T, class Alloc>
-		bool operator==	(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {	
+		bool operator==(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {	
 			if (lhs.size() != rhs.size())
 				return false;
 			return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
